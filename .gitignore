@@ -1,0 +1,12 @@
+# OneDrive / Windows
+desktop.ini
+Thumbs.db
+*.tmp
+~$*
+
+# editor
+.vscode/
+.idea/
+
+# scratch
+scratch/

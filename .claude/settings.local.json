@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Add-Type -AssemblyName System.Drawing; $img = [System.Drawing.Image]::FromFile\\(\"C:\\\\Users\\\\sakdi\\\\OneDrive\\\\Desktop\\\\Three_Kingdoms_Project\\\\Map_of_Three_Kingdoms_\\(English\\).jpg\"\\); \"Width x Height: $\\($img.Width\\) x $\\($img.Height\\)\"; \"HorizontalRes: $\\($img.HorizontalResolution\\) VerticalRes: $\\($img.VerticalResolution\\)\"; \"PixelFormat: $\\($img.PixelFormat\\)\"; $img.Dispose\\(\\))"
+    ]
+  }
+}
