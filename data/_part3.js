@@ -218,7 +218,8 @@ window.TK._part3 = [
          "— ชายคนนี้ตายแบบเดียวกันในเอกภพของเรา และสมควรได้รับหนึ่งย่อหน้าเท่ากันในทุกเอกภพ",
     camera:[1130,690,340,300],
     markers:[
-      {type:"arrow", route:"ruxu_jianye", side:"wu", unit:"square"},
+      /* จางทีข้ามแม่น้ำ "ออกจาก" เกี๋ยนเงียบมาตีทัพบกฮั่นที่หยูซวี — ต้องวิ่งย้อนเส้นทาง */
+      {type:"arrow", route:"ruxu_jianye", side:"wu", unit:"square", reverse:true},
       {type:"clash", place:"ruxu"}
     ],
     fact:"mixed",

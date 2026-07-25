@@ -350,7 +350,8 @@ window.TK.timeline = [
         "type": "arrow",
         "route": "longyou_chencang",
         "side": "wei",
-        "unit": "square"
+        "unit": "square",
+        "retreat": true
       }
     ],
     "hud": {
@@ -2001,7 +2002,8 @@ window.TK.timeline = [
         "type": "arrow",
         "route": "ruxu_jianye",
         "side": "wu",
-        "unit": "square"
+        "unit": "square",
+        "reverse": true
       },
       {
         "type": "clash",

@@ -177,7 +177,7 @@ window.TK._part1 = [
     markers:[
       {type:"arrow", route:"longyou_sweep",    side:"han", unit:"square"},
       {type:"pin",   place:"longxi",           label:"ทนล้อมสามเดือน"},
-      {type:"arrow", route:"longyou_chencang", side:"wei", unit:"square"}
+      {type:"arrow", route:"longyou_chencang", side:"wei", unit:"square", retreat:true}
     ],
     hud:{ han:{pop:1.2,troops:12}, wei:{pop:4.3,troops:39}, wu:{pop:2.3,troops:20} },
     fact:"fiction",
