@@ -1,4 +1,4 @@
-/* xiling272.js — ศึกซีหลิง ค.ศ. 272  (ศึกเดียวในสงครามทั้งหมดที่ฮั่นแพ้)
+﻿/* xiling272.js — ศึกซีหลิง ค.ศ. 272  (ศึกเดียวในสงครามทั้งหมดที่ฮั่นแพ้)
  *
  * ภูมิประเทศวาดเวกเตอร์เอง ตามที่ต้นฉบับบรรยาย:
  *   ซีหลิง = ป้อมปากทางออกช่องเขาสามหุบ · กำแพงล้อมกำแพงสองชั้น · แนวสกัดทัพหนุนกลางทาง
@@ -69,11 +69,12 @@ window.TK.battles.xiling272 = {
 
   /* ยังไม่อยู่ในฉากตอนเปิดศึก — ทัพขุดกำแพงของง่อ กับทัพหนุนสองทางของฮั่น */
   reserves: [
-    { id:"wuwall",   side:"wu",  shape:"square",   at:[222,322],  strength:18000,
-      name:"ทัพขุดกำแพงล้อม" },
+    /* ชื่อสั้นเข้าไว้ — ชื่อยาวทำให้กล่องข้อความกว้างจนไปทับหน่วยข้างเคียงตอนปะทะ */
+    { id:"wuwall",   side:"wu",  shape:"square",   at:[222,300],  strength:18000,
+      name:"ทัพขุดกำแพง" },
     { id:"yanghu",   side:"han", shape:"triangle", at:[1112,214], strength:50000, who:"yanghu" },
-    { id:"hanfleet", side:"han", shape:"hex",      at:[10,344],   strength:12000,
-      name:"กองเรือหนุนต้นน้ำ" }
+    { id:"hanfleet", side:"han", shape:"hex",      at:[10,388],   strength:12000,
+      name:"กองเรือหนุน" }
   ],
 
   phases: [
@@ -84,10 +85,10 @@ window.TK.battles.xiling272 = {
       acts:[
         { label:"ปู้ฉั่นชักธงฮั่นเหนือซีหลิง — ป้อมปากช่องเขาสามหุบ", at:[600,666] },
         { u:"yanghu",   spawn:[1112,214], ms:600 },
-        { u:"hanfleet", spawn:[10,344],   ms:600, with:true },
+        { u:"hanfleet", spawn:[10,388],   ms:600, with:true },
         { u:"yanghu",   move:"M 1112,214 C 1060,220 1010,228 970,232 C 954,234 944,236 938,238",
           ms:1700 },
-        { u:"hanfleet", move:"M 10,344 C 34,346 62,348 96,352", ms:1700, with:true }
+        { u:"hanfleet", move:"M 10,388 C 34,388 62,388 96,390", ms:1700, with:true }
       ]
     },
     {
@@ -97,7 +98,7 @@ window.TK.battles.xiling272 = {
       acts:[
         { u:"lukang", move:"M 1012,448 C 906,438 812,412 736,378 C 672,350 632,330 600,312",
           ms:2200 },
-        { u:"wuwall", spawn:[222,322], ms:700 },
+        { u:"wuwall", spawn:[222,300], ms:700 },
         /* กำแพงถูกสร้างขึ้นตรงนี้ ให้เห็นวงแหวนค่อย ๆ ปรากฏ ไม่ใช่มีอยู่ก่อนแล้ว */
         { show:"wall_out", ms:900 },
         { show:"wall_in",  ms:900, with:true },
@@ -115,7 +116,7 @@ window.TK.battles.xiling272 = {
         { show:"block_a", ms:700, with:true },
         { show:"block_b", ms:700, with:true },
         { u:"yanghu",   move:"M 938,238 C 900,254 866,272 832,290", ms:1500, with:true },
-        { u:"hanfleet", move:"M 96,352 C 118,354 142,356 166,360", ms:1500, with:true },
+        { u:"hanfleet", move:"M 96,390 C 118,390 142,390 166,392", ms:1500, with:true },
         { u:"yanghu",   clash:"lukang", ms:2800, pressure:-0.4 },
         { u:"yanghu",   shrink:0.8,  ms:2400, with:true },
         { u:"lukang",   shrink:0.9,  ms:2400, with:true },
@@ -130,7 +131,7 @@ window.TK.battles.xiling272 = {
       acts:[
         { u:"yanghu",   move:"M 832,290 C 900,262 980,232 1058,208 C 1076,202 1084,200 1090,198",
           ms:2100 },
-        { u:"hanfleet", move:"M 166,360 C 132,356 92,350 44,346", ms:1900, with:true },
+        { u:"hanfleet", move:"M 166,392 C 132,392 92,390 44,388", ms:1900, with:true },
         { label:"ทัพหนุนถอยทั้งสองทาง — ซีหลิงถูกทิ้งไว้ในวงล้อม", at:[600,666] }
       ]
     },
