@@ -23,6 +23,9 @@ TK.battle = (function(){
   let phase = -1, busy = false, playing = false;
   let tweens = [], timers = [];
   let onExit = null;
+  /* close() ซ่อน overlay แบบหน่วงเวลาเพื่อรอ transition จบ
+     ถ้าเปิดศึกใหม่ภายในช่วงนั้นต้องยกเลิก ไม่งั้นมันจะซ่อนศึกที่เพิ่งเปิด */
+  let hideTimer = null;
 
   const size = s => 9 + Math.sqrt(s) / 11;
 
@@ -59,7 +62,7 @@ TK.battle = (function(){
         g.append(mk('rect',{x:-16,y:-16,width:32,height:32,rx:3,fill:'none',
                             stroke:c,'stroke-width':3}));
         g.append(mk('path',{d:'M -16,-16 L 16,16 M 16,-16 L -16,16',
-                            stroke:c,'stroke-width':1.4,opacity:.55}));
+                            fill:'none', stroke:c,'stroke-width':1.4,opacity:.55}));
         if (t.label){ const x = mk('text',{y:-24,class:'bt-fortlabel',fill:c});
                       x.textContent = t.label; g.append(x); }
         gTerrain.append(g);
@@ -144,7 +147,9 @@ TK.battle = (function(){
 
     /* move — เดินตามเส้นทาง */
     if (a.move){
-      const p = mk('path',{d:a.move});
+      /* เส้นนี้มีไว้วัดระยะอย่างเดียว ต้องสั่ง fill/stroke = none ให้ชัด
+         ไม่งั้น SVG ระบายทึบสีดำให้ตามค่าปริยาย กลายเป็นก้อนดำเต็มจอ */
+      const p = mk('path',{d:a.move, fill:'none', stroke:'none'});
       gFx.append(p);
       const L = p.getTotalLength();
       /* วาดรอยทางเดินไว้ให้เห็นว่าเคลื่อนไปทางไหน */
@@ -346,6 +351,7 @@ TK.battle = (function(){
     B = (TK.battles || {})[id];
     if (!B){ alert('ยังไม่มีข้อมูลศึกนี้: ' + id); return; }
     onExit = exitCb;
+    clearTimeout(hideTimer);
     const host = el('battle');
     host.hidden = false;
     requestAnimationFrame(() => host.classList.add('on'));
@@ -364,7 +370,8 @@ TK.battle = (function(){
     document.removeEventListener('keydown', keys);
     const host = el('battle');
     host.classList.remove('on');
-    setTimeout(() => { host.hidden = true; }, 320);
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(() => { host.hidden = true; }, 320);
     B = null;
     if (onExit) onExit();
   }
