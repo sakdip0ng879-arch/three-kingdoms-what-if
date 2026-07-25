@@ -64,8 +64,15 @@ function checkBattle(id){
   const terrainIds = new Set((B.terrain||[]).filter(t => t.id).map(t => t.id));
 
   /* ── ป้ายป้อม ── */
+  /* กล่องข้อความต้องกะให้ใกล้ของจริง — ป้ายป้อมวาดกึ่งกลางที่ y = at−24 ขนาด 13px หนา
+     ⚠ ภาษาไทยมีสระบน-ล่างและวรรณยุกต์ที่ "ไม่กินความกว้าง" ต้องไม่นับ
+     นับทุกตัวเท่ากันจะกว้างเกินจริงราว 30% แล้วฟ้องทับมั่วไปหมด
+     (ของจริงวัดด้วย canvas.measureText อยู่ใน tools/selfcheck.js ซึ่งแม่นกว่า) */
+  const THAI_MARKS = /[ัิ-ฺ็-๎]/g;
+  const textW = s => s.replace(THAI_MARKS,'').length * 8.6 + 8;
   const fortLabels = (B.terrain||[]).filter(t => t.kind==='fort' && t.label)
-    .map(t => ({label:t.label, x:t.at[0], y:t.at[1]-30, w:t.label.length*8, h:18}));
+    .map(t => ({ label:t.label, x:t.at[0] - textW(t.label)/2, y:t.at[1]-40,
+                 w:textW(t.label), h:22 }));
 
   /* ── จำลองการเดิน phase ── */
   const live = {};
@@ -130,8 +137,10 @@ function checkBattle(id){
     for (const k in live){
       const u = live[k]; if (!u.on) continue;
       const s = size(Math.max(u.str,1));
-      boxes.push({ n: (TK.people[u.who]||{}).th || u.id,
-                   x:u.x-s, y:u.y-s-22, w:s*2, h:s*2+40 });   // เผื่อชื่อบนกับตัวเลขล่าง
+      const nm = (TK.people[u.who]||{}).th || u.name || u.id;
+      /* ชื่อหน่วยมักกว้างกว่าตัวสัญลักษณ์มาก ต้องนับด้วย ไม่งั้นจับการทับไม่เจอ */
+      const w = Math.max(s*2, textW(nm));
+      boxes.push({ n:nm, x:u.x - w/2, y:u.y-s-23, w, h:s*2+43 });
       if (u.x < 0 || u.y < 0 || u.x > VW || u.y > VH)
         E(tag, `"${k}" อยู่นอกกรอบภาพที่ (${Math.round(u.x)},${Math.round(u.y)}) `+
                `กรอบคือ ${VW}×${VH}`, 'แก้พิกัดใน at หรือปลายทางของ move');
