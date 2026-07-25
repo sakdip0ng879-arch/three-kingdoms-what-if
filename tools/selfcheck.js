@@ -105,10 +105,41 @@ TK.selfcheck = (function(){
       }
   }
 
+  /* ── 5. act ที่ทำงานพร้อมกันแล้วแย่งกันเขียนตำแหน่งของหน่วยเดียวกัน ──
+     บั๊ก "เส้นวิ่งไปแต่ทัพไม่ตาม" มาจากตรงนี้ ตรวจจากข้อมูลได้เลย ไม่ต้องรอดูภาพ
+     ทดสอบสถานะปลายทางอย่างเดียวจับไม่ได้ เพราะโหมดข้ามทันทีทุก act กระโดดไปค่าสุดท้ายพร้อมกัน */
+  const MOVES_UNIT = a => !!(a.move || a.clash || a.spawn);
+
+  function checkActOrder(id){
+    const B = (TK.battles||{})[id];
+    if (!B) return;
+    B.phases.forEach((ph, i) => {
+      const groups = [];
+      for (const a of (ph.acts || [])){
+        if (a.with && groups.length) groups[groups.length-1].push(a);
+        else groups.push([a]);
+      }
+      groups.forEach(g => {
+        const byUnit = {};
+        for (const a of g){
+          if (!a.u || !MOVES_UNIT(a)) continue;
+          (byUnit[a.u] = byUnit[a.u] || []).push(
+            a.move ? 'move' : a.clash ? 'clash' : 'spawn');
+        }
+        for (const u in byUnit)
+          if (byUnit[u].length > 1)
+            add('ผิด', `${id} ระยะ ${i+1}`,
+              `"${u}" มี act ที่ขยับตำแหน่งทำงานพร้อมกัน ${byUnit[u].length} ตัว (${byUnit[u].join(' + ')})`,
+              'เอา with:true ออก ให้ทำงานเรียงลำดับ — ไม่งั้นสองคำสั่งจะแย่งกันเขียนตำแหน่ง');
+      });
+    });
+  }
+
   /* ── ตรวจศึกหนึ่งศึก ทุกระยะ ── */
   function battle(id){
     const before = problems.length;
     if (!(TK.battles||{})[id]){ add('ผิด','—',`ไม่มีข้อมูลศึก "${id}"`,'ตรวจว่าโหลด data/battles/'+id+'.js แล้วหรือยัง'); return; }
+    checkActOrder(id);
     TK.battle.open(id, ()=>{});
     const n = TK.battles[id].phases.length;
     const svg = document.getElementById('bsvg');

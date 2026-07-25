@@ -79,8 +79,9 @@ window.TK.battles.jieting228 = {
         /* เข้ามาจนติดคูชั้นนอก ให้เห็นว่ายันกันจริง ไม่ใช่ยืนสั่นอยู่ห่าง ๆ */
         { u:"zhanghe", move:"M 880,356 C 820,352 770,358 722,354", ms:1100 },
         { u:"zhanghe", clash:"wangping", ms:3000, pressure:-0.34 },
-        { u:"zhanghe", shrink:0.74, ms:2600 },
-        { u:"wangping", shrink:0.88, ms:2600 }
+        /* with:true = เสียกำลังพร้อมกันไปกับที่ยันกันอยู่ ไม่ใช่รอให้ปะทะจบก่อน */
+        { u:"zhanghe",  shrink:0.74, ms:2600, with:true },
+        { u:"wangping", shrink:0.88, ms:2600, with:true }
       ]
     },
     {

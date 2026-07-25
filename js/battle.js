@@ -327,16 +327,31 @@ TK.battle = (function(){
     });
   }
 
+  /* act ในหนึ่งระยะ "เรียงลำดับ" เป็นค่าปริยาย
+     เพราะเจตนาคือ เดินเข้าไป → แล้วค่อยปะทะ → แล้วค่อยเสียกำลัง
+     ถ้ายิงพร้อมกัน คำสั่งเดินทัพกับคำสั่งปะทะจะแย่งกันเขียนตำแหน่งของหน่วยเดียวกัน
+     ผลคือเส้นรอยทางวิ่งไปข้างหน้าแต่ตัวทัพถูกดึงค้างอยู่ที่เดิม
+
+     ใส่ `with:true` ถ้าต้องการให้ทำงานพร้อมกับ act ก่อนหน้า
+     เช่น สองฝ่ายเสียกำลังพร้อมกันระหว่างที่ยันกันอยู่ */
   function applyPhase(n, instant, done){
-    const ph = B.phases[n];
-    const acts = ph.acts || [];
-    const unitActs = acts.filter(a => a.u);
-    const freeActs = acts.filter(a => !a.u);
-    let left = unitActs.length + freeActs.length;
-    if (!left) return done && done();
-    const tick = () => { if (--left === 0 && done) done(); };
-    unitActs.forEach(a => runAct(a, instant, tick));
-    freeActs.forEach(a => runFree(a, instant, tick));
+    const acts = (B.phases[n] || {}).acts || [];
+    if (!acts.length) return done && done();
+
+    const groups = [];
+    for (const a of acts){
+      if (a.with && groups.length) groups[groups.length - 1].push(a);
+      else groups.push([a]);
+    }
+
+    let gi = 0;
+    (function runGroup(){
+      if (gi >= groups.length) return done && done();
+      const g = groups[gi++];
+      let left = g.length;
+      const tick = () => { if (--left === 0) runGroup(); };
+      for (const a of g) (a.u ? runAct : runFree)(a, instant, tick);
+    })();
   }
 
   /* ── แผงข้อมูล ── */
