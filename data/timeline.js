@@ -1937,7 +1937,7 @@ window.TK.timeline = [
       },
       {
         "type": "arrow",
-        "route": "yangtze_fleet",
+        "route": "fleet_upper",
         "side": "han",
         "unit": "hex"
       }
@@ -1965,15 +1965,9 @@ window.TK.timeline = [
     "markers": [
       {
         "type": "arrow",
-        "route": "yangtze_fleet",
+        "route": "fleet_mid",
         "side": "han",
         "unit": "hex"
-      },
-      {
-        "type": "arrow",
-        "route": "xiangyang_jiangling",
-        "side": "han",
-        "unit": "square"
       },
       {
         "type": "clash",
@@ -2032,7 +2026,7 @@ window.TK.timeline = [
     "markers": [
       {
         "type": "arrow",
-        "route": "yangtze_fleet",
+        "route": "fleet_lower",
         "side": "han",
         "unit": "hex"
       },

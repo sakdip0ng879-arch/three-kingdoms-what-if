@@ -178,7 +178,7 @@ window.TK._part3 = [
     markers:[
       {type:"arrow", route:"xiangyang_jiangling", side:"han", unit:"square"},
       {type:"arrow", route:"ruxu_jianye",         side:"han", unit:"square"},
-      {type:"arrow", route:"yangtze_fleet",       side:"han", unit:"hex"}
+      {type:"arrow", route:"fleet_upper",         side:"han", unit:"hex"}
     ],
     battle:"conquestwu276",
     fact:"mixed",
@@ -198,8 +198,8 @@ window.TK._part3 = [
     camera:[380,780,1270,520],
     mapDelta:{ jingzhou_s:"han" },
     markers:[
-      {type:"arrow", route:"yangtze_fleet",       side:"han", unit:"hex"},
-      {type:"arrow", route:"xiangyang_jiangling", side:"han", unit:"square"},
+      /* ช่วงกลางของแม่น้ำเท่านั้น — แกนบกเล่าไปแล้วในฉากก่อน ไม่ต้องซ้ำ */
+      {type:"arrow", route:"fleet_mid", side:"han", unit:"hex"},
       {type:"clash", place:"xiling"}
     ],
     battle:"conquestwu276",
@@ -236,7 +236,7 @@ window.TK._part3 = [
     camera:[1200,780,420,380],
     mapDelta:{ yangzhou:"han" },
     markers:[
-      {type:"arrow", route:"yangtze_fleet", side:"han", unit:"hex"},
+      {type:"arrow", route:"fleet_lower", side:"han", unit:"hex"},
       {type:"pin",   place:"jianye", label:"ซุนโฮยอมจำนน"}
     ],
     battle:"conquestwu276",
