@@ -66,6 +66,54 @@ TK.ui = (function(){
       }
       track.append(grp);
     }
+    bindScrub(groups);
+  }
+
+  /* ── โหมดสำรวจ: ลากไล่ดูตลอดแถบเวลา ──
+     กดค้างแล้วลากผ่านช่องไหนก็กระโดดไปฉากนั้นทันที เห็นพื้นที่ไหลเปลี่ยนสีต่อเนื่อง 228→276
+     ระหว่างลากใช้ how:'scrub' เพื่อให้กล้องกับแอนิเมชันสั้นลง ไม่งั้นจะหน่วง */
+  function bindScrub(groups){
+    const track = $('#track');
+    let scrubbing = false, lastIndex = -1;
+
+    const indexAt = (clientX) => {
+      const cells = [...track.querySelectorAll('.tcell')];
+      let best = null, bd = Infinity;
+      for (const c of cells){
+        const r = c.getBoundingClientRect();
+        const d = Math.abs(clientX - (r.left + r.width/2));
+        if (d < bd){ bd = d; best = +c.dataset.i; }
+      }
+      return best;
+    };
+
+    const move = e => {
+      if (!scrubbing) return;
+      const i = indexAt(e.clientX);
+      if (i !== null && i !== lastIndex){ lastIndex = i; E.goTo(i, 'scrub'); }
+    };
+
+    track.addEventListener('pointerdown', e => {
+      scrubbing = true; lastIndex = -1;
+      track.setPointerCapture(e.pointerId);
+      track.classList.add('scrubbing');
+      move(e);
+    });
+    track.addEventListener('pointermove', move);
+    const stop = () => { scrubbing = false; track.classList.remove('scrubbing'); };
+    track.addEventListener('pointerup', stop);
+    track.addEventListener('pointercancel', stop);
+
+    /* ลากบนแถบภาคก็ไล่ได้เหมือนกัน */
+    const strip = $('#chapstrip');
+    strip.addEventListener('pointerdown', e => {
+      scrubbing = true; lastIndex = -1;
+      strip.setPointerCapture(e.pointerId);
+      move(e);
+    });
+    strip.addEventListener('pointermove', move);
+    strip.addEventListener('pointerup', stop);
+    strip.addEventListener('pointercancel', stop);
   }
 
   function buildHud(){
@@ -73,9 +121,11 @@ TK.ui = (function(){
       const f = TK.factions[k];
       const row = document.createElement('div');
       row.className = 'hrow';
+      /* ชื่อฝ่ายใช้สีตัวอักษรปกติ ให้จุดสีข้าง ๆ เป็นตัวบอกว่าใครเป็นใคร
+         (สีระบายพื้นที่เข้มเกินกว่าจะใช้เป็นตัวหนังสือได้ — วุ่ยได้แค่ 2.87:1) */
       row.innerHTML =
         `<div class="htop">
-           <span class="hname" style="color:${f.color}">${f.th}</span>
+           <span class="hname"><i class="hdot" style="background:${f.color}"></i>${f.th}</span>
            <span class="hnum" data-num="${k}">—</span>
          </div>
          <span class="hbar"><i data-bar="${k}" style="background:${f.color}"></i></span>`;
@@ -87,6 +137,23 @@ TK.ui = (function(){
     $('#btnNext').onclick  = () => E.next();
     $('#btnPrev').onclick  = () => E.prev();
     $('#btnReset').onclick = () => TK.map.resetView(900);
+
+    /* ความเข้มแผนที่พื้น — จำค่าที่เลือกไว้ให้ด้วย */
+    const MODES = [
+      { cls:'map-faint', th:'จาง' },
+      { cls:'',          th:'กลาง' },
+      { cls:'map-rich',  th:'ชัด'  }
+    ];
+    let mi = +(localStorage.getItem('tk-mapmode') ?? 1);
+    const applyMode = () => {
+      const st = $('#stage');
+      MODES.forEach(m => m.cls && st.classList.remove(m.cls));
+      if (MODES[mi].cls) st.classList.add(MODES[mi].cls);
+      $('#mapmode').textContent = 'แผนที่: ' + MODES[mi].th;
+      try { localStorage.setItem('tk-mapmode', mi); } catch {}
+    };
+    $('#mapmode').onclick = () => { mi = (mi + 1) % MODES.length; applyMode(); };
+    applyMode();
     $('#fact').onclick     = () => $('#factNote').classList.toggle('open');
     /* ซูมแผนที่ใหญ่เข้าไปที่จุดเกิดศึกก่อน แล้วค่อยให้แผนที่ยุทธวิธีเฟดขึ้นมาทับ
        ให้รู้สึกเหมือนซูมต่อเนื่อง ไม่ใช่กระโดดไปอีกหน้า (DECISIONS §5) */
@@ -154,10 +221,12 @@ TK.ui = (function(){
         hud && hud[k] ? `${hud[k].pop} ล้าน · ${hud[k].troops} หมื่น` : `${t[k]} เขต`;
     });
 
-    /* แผนที่ */
+    /* แผนที่ — ตอนลากไล่ดูต้องสั้นและไม่เล่นแอนิเมชันลูกศร ไม่งั้นตามไม่ทันแล้วหน่วง */
+    const scrub = ev.how === 'scrub';
     TK.map.setOwners(ev.owners);
-    TK.map.flyTo(b.camera, ev.how === 'init' ? 0 : 1100);
-    TK.map.setMarkers(b.markers, ev.how !== 'init');
+    TK.map.setFocus(b);
+    TK.map.flyTo(b.camera, ev.how === 'init' ? 0 : scrub ? 320 : 1100);
+    TK.map.setMarkers(b.markers, ev.how !== 'init' && !scrub);
   }
 
   const seasonTh = s => ({spring:'ฤดูใบไม้ผลิ', summer:'ฤดูร้อน',

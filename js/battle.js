@@ -66,7 +66,9 @@ TK.battle = (function(){
                             stroke:c,'stroke-width':3}));
         g.append(mk('path',{d:'M -16,-16 L 16,16 M 16,-16 L -16,16',
                             fill:'none', stroke:c,'stroke-width':1.4,opacity:.55}));
-        if (t.label){ const x = mk('text',{y:-24,class:'bt-fortlabel',fill:c});
+        /* ป้ายใช้สีเวอร์ชันสว่าง ไม่ใช่สีเดียวกับกรอบ — สีระบายเข้มเกินจะอ่านบนพื้นมืดไม่ออก */
+        if (t.label){ const x = mk('text',{y:-24, class:'bt-fortlabel',
+                        fill: t.side ? TK.factions[t.side].text : '#B4BAC4'});
                       x.textContent = t.label; g.append(x); }
         gTerrain.append(g);
       } else {
@@ -392,6 +394,24 @@ TK.battle = (function(){
       d.onclick = () => { playing=false; goPhase(i, true); };
       return d;
     }));
+    /* คำอธิบายเส้นภูมิประเทศ — โชว์เฉพาะชนิดที่ศึกนี้มีจริง จอจะได้ไม่รก
+       และคนดูไม่ต้องมองหาเส้นที่ไม่มีอยู่ */
+    const TERRAIN_TH = {
+      ridge:  'สันเขา / ผา',
+      stream: 'แม่น้ำ / ลำธาร',
+      road:   'ถนน',
+      trench: 'คูดิน / แนวป้องกัน',
+      fort:   'ป้อม / คลังเสบียง'
+    };
+    const kinds = [...new Set((B.terrain || []).map(t => t.kind))]
+      .filter(k => TERRAIN_TH[k]);
+    el('bTerrainKey').replaceChildren(...kinds.map(k => {
+      const d = document.createElement('div');
+      d.className = 'tkey';
+      d.innerHTML = `<i class="tk-${k}"></i><span>${TERRAIN_TH[k]}</span>`;
+      return d;
+    }));
+
     el('bRoster').replaceChildren(...Object.values(U)
       .filter(u => u.el.style.display !== 'none')
       .map(u => {

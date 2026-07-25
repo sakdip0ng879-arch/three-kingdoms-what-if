@@ -55,7 +55,7 @@ TK.map = (function(){
     svg.append(defs);
 
     svg.append(mk('image',{href:'assets/map.jpg', x:0, y:0, width:W, height:H, id:'basemap'}));
-    for (const name of ['regions','routes','markers','pins','labels'])
+    for (const name of ['regions','focus','routes','markers','pins','labels'])
       svg.append(layers[name] = mk('g',{id:'L-'+name}));
 
     /* ปิดทับตัวอักษร WEI / SHU / WU ที่พิมพ์มากับแผนที่ (สลับสีกับคอนเวนชันของเรา) */
@@ -129,9 +129,58 @@ TK.map = (function(){
     layers.pins.style.opacity   = 0;
     settleTimer = setTimeout(() => {
       relayout();
+      updateWhere();
       layers.labels.style.opacity = 1;
       layers.pins.style.opacity   = 1;
     }, delay);
+  }
+
+  /* ── "ตอนนี้กำลังดูอะไรอยู่" ──
+     กล้องซูมเข้าออกโดยไม่บอกว่าดูอะไร ทำให้คนที่ไม่รู้จักภูมิศาสตร์แถบนั้นหลง
+     หาเองได้จากเขตที่กล้องเล็งไป + สถานที่ที่ฉากนี้ปักหมุด ไม่ต้องเพิ่มข้อมูล 71 ฉาก */
+  let focusBeat = null;
+  const setFocus = b => { focusBeat = b; };
+
+  function regionAt(x, y){
+    const pt = svg.createSVGPoint(); pt.x = x; pt.y = y;
+    for (const id in regionEl)
+      if (regionEl[id].isPointInFill(pt)) return id;
+    return null;
+  }
+
+  function updateWhere(){
+    const box = document.getElementById('where');
+    if (!box) return;
+
+    /* ⚠ ต้องตัดสินจาก "กรอบที่ฉากตั้งใจ" ไม่ใช่ viewBox จริงบนจอ
+       เพราะ fitBox ขยายกรอบให้พอดีสัดส่วนจอ จอกว้างมาก ๆ (เช่น 2454×784)
+       จะทำให้กรอบที่ตั้งใจซูม 340 บานเป็น 1535 แล้วถูกตัดสินว่า "ทั้งแผ่นดิน" ผิด ๆ */
+    const cam  = focusBeat && focusBeat.camera;
+    const wide = !cam || cam[2] > W * 0.72;
+    const cx   = cam ? cam[0] + cam[2]/2 : W/2;
+    const cy   = cam ? cam[1] + (cam[3] || cam[2]) / 2 : H/2;
+    const rid  = wide ? null : regionAt(cx, cy);
+
+    /* สถานที่ที่ฉากนี้พูดถึง เอามาจาก marker ตรง ๆ */
+    const spots = [...new Set((focusBeat && focusBeat.markers || [])
+      .filter(m => m.place && TK.places[m.place])
+      .map(m => TK.places[m.place].th))].slice(0, 3);
+
+    const parts = [];
+    if (wide) parts.push('ทั้งแผ่นดิน');
+    else if (rid) parts.push(TK.regions[rid].th);
+    if (spots.length) parts.push(spots.join(' · '));
+
+    box.innerHTML = parts.length
+      ? `<b>${parts[0]}</b>${parts[1] ? '<span>' + parts[1] + '</span>' : ''}` : '';
+    box.classList.toggle('on', parts.length > 0);
+
+    /* ตีกรอบเขตที่กำลังดู ให้ตารู้ทันทีว่าต้องมองตรงไหน */
+    layers.focus.replaceChildren();
+    if (rid){
+      const o = mk('path',{d:TK.regions[rid].d, class:'region-focus'});
+      layers.focus.append(o);
+    }
   }
 
   /* จัดกรอบที่ขอ (x,y,w,h) ให้พอดีกล่องบนจอ โดยยังเห็นครบทั้งกรอบ */
@@ -350,7 +399,7 @@ TK.map = (function(){
     });
   }
 
-  const api = { init, setOwners, flyTo, resetView, setMarkers, relayout,
+  const api = { init, setOwners, flyTo, resetView, setMarkers, relayout, setFocus,
                 get viewBox(){ return {...vb}; } };
   return api;
 })();

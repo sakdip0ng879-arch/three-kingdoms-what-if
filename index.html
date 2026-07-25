@@ -9,6 +9,8 @@
 <body>
 
 <div id="stage">
+  <div id="where"></div>
+  <button id="mapmode" title="สลับความเข้มของแผนที่พื้น">แผนที่: กลาง</button>
   <div id="hud"></div>
 </div>
 
@@ -34,7 +36,8 @@
   </div>
 
   <div class="hint">
-    ← → หรือ Space เดินเรื่อง · ล้อเลื่อนซูม · ลากเพื่อแพน · Esc คืนมุมกล้อง
+    ← → หรือ Space เดินเรื่อง · Enter เข้าสมรภูมิ · ล้อเลื่อนซูม · ลากแผนที่เพื่อแพน · Esc คืนมุมกล้อง<br>
+    <b>ลากแถบเวลาด้านล่างเพื่อไล่ดูพื้นที่เปลี่ยนมือตลอด 228–276</b>
   </div>
 
   <div class="foot">
@@ -63,6 +66,10 @@
       <div class="bside">
         <div class="bsidehead">กำลังพลในสมรภูมิ</div>
         <div id="bRoster"></div>
+
+        <div class="bsidehead" style="margin-top:6px">อ่านแผนที่</div>
+        <div id="bTerrainKey"></div>
+
         <div class="blegend">
           <span><i class="bchip s-triangle"></i> ทหารม้า</span>
           <span><i class="bchip s-square"></i> ทหารราบ</span>
