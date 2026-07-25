@@ -57,7 +57,7 @@ window.TK.places = {
   shangbang: { th:"ชั่งกุย",  py:"Shanggui", map:"Shang Bang", x:365, y:625, type:"town" },
   mumen:     { th:"ช่องเขามู่เหมิน", py:"Mumen", map:"Mu Men", x:311, y:636, type:"pass" },
   beiyuan:   { th:"เป่ยหยวน", py:"Beiyuan",  map:"Bei Yuan",  x:302, y:595, type:"town" },
-  yinping:   { th:"อิมเป๋ง",  py:"Yinping",  map:"Yin Ping",  x:328, y:720, type:"town" },
+  yinping:   { th:"ยินผิง",   py:"Yinping",  map:"Yin Ping",  x:328, y:720, type:"town" },
   wudu:      { th:"บู๊โต๋",   py:"Wudu",     map:"Wu Du",     x:362, y:658, type:"town" },
   lueyang:   { th:"เลวี่ยหยาง", py:"Lueyang", map:"Lue Yang", x:388, y:743, type:"town" },
   xiabian:   { th:"เซี่ยเปี้ยน", py:"Xiabian", map:"Xia Bian", x:416, y:705, type:"town" },

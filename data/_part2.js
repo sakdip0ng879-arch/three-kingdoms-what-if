@@ -1,4 +1,4 @@
-/* _part2.js — ภาคสาม + ภาคสี่ + ภาคห้า (ค.ศ. 230–263)
+﻿/* _part2.js — ภาคสาม + ภาคสี่ + ภาคห้า (ค.ศ. 230–263)
  *
  * ที่มา: What_If_First_Northern_Expedition.md บรรทัด 68–167
  * fact/factNote ตัดสินจากภาคผนวกบรรทัด 224–233
@@ -44,7 +44,7 @@ window.TK._part2 = [
       {type:"pin", place:"puban",    label:"ท่าข้ามจมน้ำ"},
       {type:"pin", place:"tongguan", label:"ทะเลโคลนหน้ากำแพง"}
     ],
-    fact:"real",
+    fact:"mixed",
     factNote:"ฝนสามสิบวันปี 230 ที่ล่มการบุกของโจจิ๋นเป็นเหตุการณ์จริงในพงศาวดาร " +
              "ในเอกภพนี้ฝนห่าเดียวกันตกใส่กองทัพชุดเดียวกัน เพียงแต่คนละสมรภูมิ"
   },
@@ -484,7 +484,7 @@ window.TK._part2 = [
          "สุมาเจียวขัดโองการยกทัพกลับ แต่ระหว่างทางกลับ ลกเอี๋ยงเปิดประตูไปแล้ว",
     camera:[850,420,400,380],
     markers:[
-      {type:"clash", place:"luoyang"},
+      {type:"pin",   place:"luoyang", label:"ถูกล้อม — ยังไม่มีใครตีกำแพง"},
       {type:"pin",   place:"xuchang", label:"ราชโองการสายฟ้าแลบ"}
     ],
     fact:"mixed",
@@ -518,10 +518,10 @@ window.TK._part2 = [
     camera:[900,560,500,400],
     markers:[
       {type:"pin",   place:"hulao", label:"แนวรับใหม่ ฮูโลก-ฮูโต๋"},
-      {type:"arrow", route:"ruxu_hefei", side:"wu", unit:"hex"},
+      {type:"arrow", route:"ruxu_shouchun", side:"wu", unit:"hex"},
       {type:"clash", place:"shouchun"}
     ],
-    fact:"real",
+    fact:"mixed",
     factNote:"กบฏจูกัดตั้นปี 257–258 ง่อส่งทัพเข้าหนุนถึงในเมือง และตัวเลขทัพล้อมยี่สิบหกหมื่นเป็นตัวเลขจริงจากเอกภพของเรา " +
              "มีแต่แนวรับฮูโลก-ฮูโต๋ที่เป็นของเอกภพนี้ เพราะลกเอี๋ยงเสียไปแล้ว"
   },
@@ -555,7 +555,7 @@ window.TK._part2 = [
     camera:[900,560,500,400],
     markers:[
       {type:"clash", place:"shouchun"},
-      {type:"arrow", route:"ruxu_hefei", side:"wu", unit:"hex"}
+      {type:"arrow", route:"ruxu_shouchun", side:"wu", unit:"hex"}
     ],
     fact:"mixed",
     factNote:"โซ่วชุนแตกในปี 258 และจูกัดตั้นตายในที่รบจริง " +

@@ -80,7 +80,11 @@ window.TK.battles.eastern255 = {
     { id:"liaohua",  side:"han", shape:"triangle", at:[176,432],  strength:30000,  who:"liaohua"  },
     { id:"jiangwei", side:"han", shape:"square",   at:[64,456],   strength:70000,  who:"jiangwei" },
     /* แกนเหนือ — สี่หมื่นข้ามผู่ปั่นเข้าเหอตง */
-    { id:"dengai",   side:"han", shape:"triangle", at:[70,186],   strength:40000,  who:"dengai"   },
+    /* ⚠ ห้ามใส่ชื่อเตงงายตรงนี้ — ปี 255 เขายังเป็นแม่ทัพวุ่ยคุมเหอเน่ย์
+       เขาเปลี่ยนมาถือธงฮั่นในปี 260 (ฉาก c5-12) หลังโจมอถูกปลงพระชนม์
+       และต้นฉบับไม่ได้ระบุชื่อแม่ทัพแกนเหนือไว้เลย จึงใช้ชื่อกองแทนชื่อคน */
+    { id:"dengai",   side:"han", shape:"triangle", at:[70,186],   strength:40000,
+      name:"ทัพแกนเหนือ" },
 
     { id:"guoxun",   side:"wei", shape:"square",   at:[560,416],  strength:25000,  who:"guoxun"   },
     /* ลกเอี๋ยงเป็นวงกลม = เมืองป้อม เพราะ siege ต้องล้อม "หน่วย" ไม่ใช่ป้อม */

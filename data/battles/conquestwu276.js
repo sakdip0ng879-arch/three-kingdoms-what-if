@@ -1,4 +1,4 @@
-/* conquestwu276.js — ศึกพิชิตง่อ ค.ศ. 275–276  (ศึกปิดเรื่อง)
+﻿/* conquestwu276.js — ศึกพิชิตง่อ ค.ศ. 275–276  (ศึกปิดเรื่อง)
  *
  * แผนของตู้อวี้แบ่งเป็นสามแกน ภาพจึงต้องอ่านออกเป็นสามแถบพร้อมกัน:
  *   แกนกลาง  (บนซ้าย)  หยางฮู่ + ตู้อวี้  เซียงหยาง → กังเหลง  ตัดเกงจิ๋วขาดสองท่อน
@@ -68,7 +68,7 @@ window.TK.battles.conquestwu276 = {
 
   units: [
     /* แกนแม่น้ำ — ทหารเรือเจ็ดหมื่น โลเฮี้ยนนำหน้าเพราะรู้จักทุกเกลียวน้ำของช่องเขาสามหุบ */
-    { id:"wangjun", side:"han", shape:"hex",      at:[34,330],   strength:70000, who:"wangjun" },
+    { id:"wangjun", side:"han", shape:"hex",      at:[34,330],   strength:50000, who:"wangjun" },
     { id:"luoxian", side:"han", shape:"hex",      at:[112,328],  strength:20000, who:"luoxian" },
     /* แกนกลาง */
     { id:"yanghu",  side:"han", shape:"square",   at:[430,150],  strength:60000, who:"yanghu" },
