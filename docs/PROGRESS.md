@@ -63,7 +63,7 @@ git checkout phase-2 -- js/engine.js
 **ไฟล์ที่แตะ**
 `docs/DECISIONS.md` · `docs/SCHEMA.md` · `docs/PROGRESS.md` · `.gitignore` · `assets/map.jpg`
 
-**commit** — `phase-0`
+**commit** — `7338abd` · tag `phase-0`
 
 **วิธีย้อนกลับ** — เฟสนี้เป็นเอกสารล้วน ไม่มีโค้ด ไม่ต้องย้อน
 
