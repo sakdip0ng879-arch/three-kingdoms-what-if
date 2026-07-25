@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>สามก๊ก What If — ถ้าการบุกเหนือครั้งแรกของขงเบ้งสำเร็จ</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="stage">
+  <div id="hud"></div>
+</div>
+
+<div id="time">
+  <div id="track"></div>
+  <span id="counter">—</span>
+</div>
+
+<aside>
+  <div class="head">
+    <div id="chapter"></div>
+    <div id="year"></div>
+    <h1 id="title"></h1>
+  </div>
+
+  <div class="body">
+    <p id="text" class="text"></p>
+    <span id="fact" class="fact"></span>
+    <div id="factNote"></div>
+  </div>
+
+  <div class="hint">
+    ← → หรือ Space เดินเรื่อง · ล้อเลื่อนซูม · ลากเพื่อแพน · Esc คืนมุมกล้อง
+  </div>
+
+  <div class="foot">
+    <button id="btnPrev">◀ ย้อน</button>
+    <button id="btnNext">ต่อไป ▶</button>
+    <button id="btnReset" title="คืนมุมกล้องทั้งแผ่นดิน">⤢</button>
+  </div>
+  <div style="padding:0 18px 16px">
+    <button id="btnBattle" hidden>⚔ เข้าดูสมรภูมิ</button>
+  </div>
+</aside>
+
+<!-- data ต้องมาก่อน engine เสมอ (DECISIONS กฎ 3 — ไม่มี fetch จะได้เปิดแบบ file:// ได้) -->
+<script src="data/names.js"></script>
+<script src="data/places.js"></script>
+<script src="data/geo.js"></script>
+<script src="data/routes.js"></script>
+<script src="data/timeline.js"></script>
+
+<script src="js/labeler.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/strategic.js"></script>
+<script src="js/ui.js"></script>
+<script>
+  TK.map.init(document.getElementById('stage'));
+  TK.ui.init();
+</script>
+</body>
+</html>

@@ -1,0 +1,302 @@
+/* strategic.js — แผนที่ยุทธศาสตร์
+ *
+ * SVG ชั้นเดียวครอบ JPG ใช้ viewBox = พิกัดพิกเซลของภาพต้นฉบับ (DECISIONS §4)
+ * Zoom/Pan = แก้ค่า viewBox อย่างเดียว ห้ามซ้อน CSS transform (DECISIONS §5)
+ */
+window.TK = window.TK || {};
+
+TK.map = (function(){
+
+  const NS = 'http://www.w3.org/2000/svg';
+  const W = 1650, H = 1950;
+
+  /* ⚠ preserveAspectRatio="meet" ย่อ/ขยายตามด้านที่ "คับกว่า"
+     ถ้า viewBox มีสัดส่วนไม่ตรงกับกล่องบนจอ จะเกิดขอบดำและสเกลไม่ใช่ w/screenW
+     → บังคับสัดส่วน viewBox ให้ตรงกับกล่องเสมอ กล้องถึงจะไปตรงที่สั่งจริง ๆ */
+  const fitAR = () => (host.clientHeight || 1) / (host.clientWidth || 1);
+  const mk = (n,a) => { const e = document.createElementNS(NS,n);
+    for (const k in (a||{})) e.setAttribute(k,a[k]); return e; };
+
+  let svg, layers = {}, host;
+  let vb = { x:0, y:0, w:W, h:H };
+  let camCancel = null, relayoutRaf = null;
+  let forceLabels = new Set();
+  const regionEl = {}, pinEl = {}, labelEl = {};
+
+  /* ── สัญลักษณ์กองทัพ (DECISIONS §6) ── */
+  function unitShape(kind, s){
+    switch (kind){
+      case 'triangle': return mk('polygon',{points:`0,${-s} ${s},${s*0.8} ${-s},${s*0.8}`});
+      case 'hex':      return mk('polygon',{points:
+        [0,30,90,150,210,270,330].slice(1).map(a=>{
+          const r=a*Math.PI/180; return `${(s*Math.cos(r)).toFixed(1)},${(s*Math.sin(r)).toFixed(1)}`;
+        }).join(' ')});
+      case 'circle':   return mk('circle',{r:s});
+      default:         return mk('rect',{x:-s, y:-s, width:s*2, height:s*2});
+    }
+  }
+
+  /* ── สร้างครั้งเดียว ── */
+  function init(hostEl){
+    host = hostEl;
+    svg = mk('svg',{viewBox:`0 0 ${W} ${H}`, preserveAspectRatio:'xMidYMid meet', id:'tkmap'});
+    host.append(svg);
+
+    svg.append(mk('image',{href:'assets/map.jpg', x:0, y:0, width:W, height:H, id:'basemap'}));
+    for (const name of ['regions','routes','markers','pins','labels'])
+      svg.append(layers[name] = mk('g',{id:'L-'+name}));
+
+    /* ปิดทับตัวอักษร WEI / SHU / WU ที่พิมพ์มากับแผนที่ (สลับสีกับคอนเวนชันของเรา) */
+    const mask = mk('g',{id:'L-mask'});
+    [[560,455,205,95],[262,1195,215,95],[1175,1450,180,95]].forEach(([x,y,w,h]) =>
+      mask.append(mk('rect',{x,y,width:w,height:h, fill:'#eef1f4', opacity:.92})));
+    svg.insertBefore(mask, layers.regions);
+
+    buildRegions();
+    buildPins();
+    bindPanZoom();
+    vb = fitBox(0, 0, W, H);        // เริ่มที่ทั้งแผ่นดิน โดยสัดส่วนตรงกับกล่อง
+    applyVB();
+    return api;
+  }
+
+  function buildRegions(){
+    for (const id in TK.regions){
+      const r = TK.regions[id];
+      const c = TK.factions[r.owner].color;
+      const p = mk('path',{d:r.d, class:'region', fill:c, stroke:c});
+      p.dataset.id = id;
+      const t = mk('title'); t.textContent = r.th;
+      p.append(t);
+      layers.regions.append(p);
+      regionEl[id] = p;
+    }
+  }
+
+  function buildPins(){
+    for (const id in TK.places){
+      const p = TK.places[id];
+      const g = mk('g',{class:'pin t-'+p.type});
+      g.dataset.id = id;
+      g.append(mk('circle',{cx:p.x, cy:p.y, r: p.type==='capital' ? 6 : 4}));
+      const t = mk('title'); t.textContent = `${p.th} · ${p.py}`;
+      g.append(t);
+      layers.pins.append(g);
+      pinEl[id] = g;
+    }
+  }
+
+  /* ── เจ้าของพื้นที่ ── */
+  function setOwners(owners){
+    for (const id in owners){
+      const el = regionEl[id]; if (!el) continue;
+      const c = TK.factions[owners[id]].color;
+      if (el.getAttribute('fill') !== c){
+        el.setAttribute('fill', c);
+        el.setAttribute('stroke', c);
+        el.classList.remove('flip'); void el.offsetWidth; el.classList.add('flip');
+      }
+    }
+  }
+
+  /* ── กล้อง: tween viewBox ── */
+  function applyVB(){
+    svg.setAttribute('viewBox', `${vb.x.toFixed(1)} ${vb.y.toFixed(1)} ${vb.w.toFixed(1)} ${vb.h.toFixed(1)}`);
+    scheduleRelayout();
+  }
+
+  /* จัดกรอบที่ขอ (x,y,w,h) ให้พอดีกล่องบนจอ โดยยังเห็นครบทั้งกรอบ */
+  function fitBox(x0, y0, w0, h0){
+    const ar = fitAR();
+    h0 = h0 || w0 * ar;
+    const cx = x0 + w0/2, cy = y0 + h0/2;
+    let w, h;
+    if (h0 / w0 > ar) { h = h0; w = h0 / ar; }   // กรอบสูงกว่าจอ → ขยายด้านกว้าง
+    else              { w = w0; h = w0 * ar; }   // กรอบเตี้ยกว่าจอ → ขยายด้านสูง
+    if (w > W){ w = W; h = w * ar; }
+    if (h > H){ h = H; w = h / ar; }
+    return { w, h,
+      x: Math.max(0, Math.min(W - w, cx - w/2)),
+      y: Math.max(0, Math.min(H - h, cy - h/2)) };
+  }
+
+  function flyTo(cam, ms){
+    if (camCancel) camCancel();
+    if (!cam) return;
+    const to = fitBox(cam[0], cam[1], cam[2], cam[3]);
+    camCancel = TK.engine.tween({...vb}, to, ms === undefined ? 1100 : ms,
+      cur => { vb = cur; applyVB(); });
+  }
+
+  const resetView = ms => flyTo([0,0,W,H], ms);
+
+  /* ── หมุด / ลูกศร / การปะทะ ── */
+  function clearMarkers(){ layers.markers.replaceChildren(); }
+
+  function setMarkers(markers, animate){
+    clearMarkers();
+    forceLabels = new Set();
+    if (!markers) { scheduleRelayout(); return; }
+
+    markers.forEach((m, idx) => {
+      if (m.type === 'pin'){
+        const p = TK.places[m.place]; if (!p) return;
+        forceLabels.add(m.place);
+        const g = mk('g',{class:'mk-pin'});
+        g.append(mk('circle',{cx:p.x, cy:p.y, r:13, class:'mk-halo'}));
+        g.append(mk('circle',{cx:p.x, cy:p.y, r:5,  class:'mk-dot'}));
+        if (m.label){
+          const t = mk('text',{x:p.x, y:p.y - 20, class:'mk-label','text-anchor':'middle'});
+          t.textContent = m.label;
+          g.append(t);
+        }
+        layers.markers.append(g);
+      }
+
+      if (m.type === 'arrow'){
+        const rt = TK.routes[m.route]; if (!rt) return;
+        const col = TK.factions[m.side].color;
+        const path = mk('path',{d:rt.d, class:'mk-route', stroke:col});
+        layers.markers.append(path);
+        const L = path.getTotalLength();
+        path.style.strokeDasharray  = L;
+        path.style.strokeDashoffset = L;
+
+        /* ชั้นนอกรับ translate ชั้นในรับ scale — relayout() ปรับ scale ให้ขนาดคงที่บนจอ */
+        const g  = mk('g',{class:'mk-unit'});
+        const gs = mk('g',{class:'mk-unit-s'});
+        const sh = unitShape(m.unit || 'square', 9);
+        sh.setAttribute('fill', col);
+        gs.append(sh); g.append(gs);
+        layers.markers.append(g);
+
+        const run = () => {
+          TK.engine.tween({v:0},{v:1}, 1500 + idx*160, cur => {
+            path.style.strokeDashoffset = L * (1 - cur.v);
+            const pt = path.getPointAtLength(L * cur.v);
+            g.setAttribute('transform', `translate(${pt.x},${pt.y})`);
+          });
+        };
+        if (animate === false){
+          path.style.strokeDashoffset = 0;
+          const pt = path.getPointAtLength(L);
+          g.setAttribute('transform', `translate(${pt.x},${pt.y})`);
+        } else setTimeout(run, 260 + idx*140);
+      }
+
+      if (m.type === 'clash'){
+        const p = TK.places[m.place]; if (!p) return;
+        forceLabels.add(m.place);
+        const g = mk('g',{class:'mk-clash', transform:`translate(${p.x},${p.y})`});
+        g.append(mk('circle',{r:16, class:'mk-clash-ring'}));
+        g.append(mk('circle',{r:24, class:'mk-clash-ring r2'}));
+        g.append(mk('path',{d:'M -7,-7 L 7,7 M 7,-7 L -7,7', class:'mk-clash-x'}));
+        layers.markers.append(g);
+      }
+    });
+    scheduleRelayout();
+  }
+
+  /* ── ป้ายชื่อ: เรียก labeler ใหม่ทุกครั้งที่กรอบภาพเปลี่ยน ── */
+  function scheduleRelayout(){
+    if (relayoutRaf) return;
+    relayoutRaf = requestAnimationFrame(() => { relayoutRaf = null; relayout(); });
+  }
+
+  function relayout(){
+    const screenW = host.clientWidth || 1000;
+    const FONT_PX = 13.5;
+    /* สเกลจริงของ meet = ด้านที่คับกว่า — คำนวณตรง ๆ อย่าเดาจากความกว้างอย่างเดียว */
+    const scale = Math.min(screenW / vb.w, (host.clientHeight || 1) / vb.h);
+    const mu = 1 / scale;                      // map-unit ต่อ 1 screen px
+
+    /* ทุกอย่างที่ต้อง "ขนาดคงที่บนจอ" ต้องคูณ mu เพราะ viewBox ย่อ-ขยายตลอด */
+    layers.markers.querySelectorAll('.mk-label').forEach(t => {
+      t.style.fontSize    = (FONT_PX * 1.2 * mu) + 'px';
+      t.style.strokeWidth = (FONT_PX * 0.30 * mu) + 'px';
+    });
+    layers.markers.querySelectorAll('.mk-unit-s').forEach(g =>
+      g.setAttribute('transform', `scale(${mu.toFixed(3)})`));
+    layers.markers.querySelectorAll('.mk-route').forEach(p =>
+      p.style.strokeWidth = (4 * mu) + 'px');
+    layers.markers.querySelectorAll('.mk-clash').forEach(g => {
+      const t = g.getAttribute('transform').replace(/ scale\([^)]*\)/,'');
+      g.setAttribute('transform', `${t} scale(${mu.toFixed(3)})`);
+    });
+    layers.pins.querySelectorAll('circle').forEach(c => {
+      const id = c.parentNode.dataset.id;
+      c.setAttribute('r', (TK.places[id].type==='capital' ? 5 : 3.4) * mu);
+      c.style.strokeWidth = (1.3 * mu) + 'px';
+    });
+
+    const res = TK.labeler.layout(TK.places, vb, screenW, {
+      force: forceLabels, fontPx: FONT_PX, pinR: 4,
+      fontFamily: '"Leelawadee UI","Segoe UI",Tahoma,sans-serif'
+    });
+
+    const on = new Set(res.pins);
+    for (const id in pinEl) pinEl[id].style.display = on.has(id) ? '' : 'none';
+
+    layers.labels.replaceChildren();
+    for (const L of res.labels){
+      const t = mk('text',{x:L.x, y:L.y, 'text-anchor':L.anchor,
+        class:'plabel' + (forceLabels.has(L.id) ? ' hot' : '')});
+      t.style.fontSize = L.fontMU + 'px';
+      /* ฮาโลบางกว่านี้ไม่ชัด หนากว่านี้สระไทยจะเชื่อมกันเป็นก้อนดำอ่านไม่ออก */
+      t.style.strokeWidth = (L.fontMU * 0.17) + 'px';
+      t.textContent = TK.places[L.id].th;
+      layers.labels.append(t);
+      labelEl[L.id] = t;
+    }
+  }
+
+  /* ── ลาก/ซูมด้วยมือ ── */
+  function toMap(evt){
+    const pt = svg.createSVGPoint();
+    pt.x = evt.clientX; pt.y = evt.clientY;
+    return pt.matrixTransform(svg.getScreenCTM().inverse());
+  }
+
+  function bindPanZoom(){
+    let from = null;
+    host.addEventListener('wheel', e => {
+      e.preventDefault();
+      if (camCancel) camCancel();
+      const p = toMap(e);
+      const k = e.deltaY > 0 ? 1.16 : 1/1.16;
+      const nw = Math.min(W, Math.max(140, vb.w * k)), nh = nw * fitAR();
+      vb.x = p.x - (p.x - vb.x) * (nw/vb.w);
+      vb.y = p.y - (p.y - vb.y) * (nh/vb.h);
+      vb.w = nw; vb.h = nh;
+      applyVB();
+    }, {passive:false});
+
+    host.addEventListener('pointerdown', e => {
+      if (camCancel) camCancel();
+      from = {mx:e.clientX, my:e.clientY, vx:vb.x, vy:vb.y};
+      host.setPointerCapture(e.pointerId);
+      host.classList.add('grabbing');
+    });
+    host.addEventListener('pointermove', e => {
+      if (!from) return;
+      const sc = vb.w / (host.clientWidth || 1);
+      vb.x = from.vx - (e.clientX - from.mx) * sc;
+      vb.y = from.vy - (e.clientY - from.my) * sc;
+      applyVB();
+    });
+    const end = () => { from = null; host.classList.remove('grabbing'); };
+    host.addEventListener('pointerup', end);
+    host.addEventListener('pointercancel', end);
+
+    /* ย่อ-ขยายหน้าต่างแล้วต้องแก้สัดส่วน viewBox ตาม ไม่งั้นสเกลเพี้ยนทันที */
+    window.addEventListener('resize', () => {
+      const c = { x: vb.x + vb.w/2, y: vb.y + vb.h/2 };
+      const f = fitBox(c.x - vb.w/2, c.y - vb.h/2, vb.w, vb.w * fitAR());
+      vb = f; applyVB();
+    });
+  }
+
+  const api = { init, setOwners, flyTo, resetView, setMarkers, relayout,
+                get viewBox(){ return {...vb}; } };
+  return api;
+})();
