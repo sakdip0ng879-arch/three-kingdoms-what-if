@@ -31,6 +31,10 @@ body{
 .pin circle{fill:#f3f6ff; stroke:#0b0d12; stroke-width:1.4; opacity:.9}
 .pin.t-capital circle{fill:var(--gold); stroke-width:2}
 
+/* ป้ายกับหมุดเฟดหายระหว่างกล้องเคลื่อน แล้วโผล่กลับมาตอนนิ่ง
+   ทั้งเร็วกว่าและดูดีกว่าปล่อยให้วิ่งสะบัดตามกล้อง */
+#L-labels, #L-pins{transition:opacity .28s ease}
+
 .plabel{
   fill:#fff; font-weight:600; paint-order:stroke;
   stroke:#0b0d12; stroke-linejoin:round; pointer-events:none;
@@ -56,9 +60,23 @@ body{
 
 /* ══ แถบเวลา ══ */
 #time{grid-area:time; background:var(--panel); border-top:1px solid var(--line);
-  padding:10px var(--pad) 12px; display:flex; align-items:center; gap:14px}
-#track{flex:1; display:flex; gap:5px; height:26px}
-.tgrp{display:flex; gap:2px; flex:1; padding:0 3px;
+  padding:8px var(--pad) 11px; display:flex; align-items:flex-end; gap:14px}
+#tstack{flex:1; display:flex; flex-direction:column; gap:4px; min-width:0}
+
+/* แถวภาค — กดกระโดดไปต้นภาคได้ */
+#chapstrip{display:flex; gap:5px}
+.chapbtn{flex:1 1 0; min-width:0; padding:3px 2px 4px; border:0; border-radius:4px;
+  background:#21263280; color:var(--dim); cursor:pointer; line-height:1.15;
+  display:flex; flex-direction:column; align-items:center; gap:1px;
+  transition:background .18s, color .18s}
+.chapbtn b{font-size:12px; font-weight:700}
+.chapbtn i{font-size:9px; font-style:normal; opacity:.7; white-space:nowrap;
+  overflow:hidden; text-overflow:clip}
+.chapbtn:hover{background:#2e3546; color:var(--text)}
+.chapbtn.now{background:#3a3320; color:var(--gold)}
+
+#track{display:flex; gap:5px; height:20px}
+.tgrp{display:flex; gap:2px; flex:1 1 0; min-width:0; padding:0 3px;
   border-bottom:2px solid var(--line); border-radius:2px}
 .tgrp:nth-child(even){border-bottom-color:#39415a}
 .tcell{flex:1; min-width:5px; border:0; border-radius:2px; cursor:pointer;

@@ -20,28 +20,52 @@ TK.ui = (function(){
     E.goTo(0, 'init');
   }
 
-  /* ── แถบเวลา: หนึ่งช่องต่อหนึ่ง beat จัดกลุ่มตามภาค ── */
+  /* ── แถบเวลา: แถวบนคือภาค (กดกระโดดได้) แถวล่างคือหนึ่งช่องต่อหนึ่ง beat ──
+     ทั้งสองแถวใช้ flex-grow เท่ากับจำนวน beat ในภาคนั้น จะได้ตรงคอลัมน์กัน */
+  const SHORT = ['นำ','๑','๒','๓','๔','๕','๖','๗','ท้าย'];
+
   function buildTimeline(){
-    const track = $('#track');
-    track.replaceChildren();
-    let chap = -1, grp = null;
+    const strip = $('#chapstrip'), track = $('#track');
+    strip.replaceChildren(); track.replaceChildren();
+
+    /* จัดกลุ่ม beat ตามภาค โดยยึดลำดับที่ปรากฏจริง */
+    const groups = [];
     E.beats.forEach((b, i) => {
-      if (b.chapter !== chap){
-        chap = b.chapter;
-        grp = document.createElement('div');
-        grp.className = 'tgrp';
-        const info = TK.chapters.find(c => c.n === chap);
-        grp.title = info ? `${info.th} (${info.years})` : '';
-        grp.dataset.chapter = chap;
-        track.append(grp);
-      }
-      const cell = document.createElement('button');
-      cell.className = 'tcell';
-      cell.dataset.i = i;
-      cell.title = `${b.year} · ${b.title}`;
-      cell.onclick = () => E.goTo(i, 'scrub');
-      grp.append(cell);
+      const last = groups[groups.length - 1];
+      if (!last || last.chapter !== b.chapter)
+        groups.push({ chapter:b.chapter, first:i, items:[i] });
+      else last.items.push(i);
     });
+
+    for (const g of groups){
+      const info = TK.chapters.find(c => c.n === g.chapter) || {};
+      const cap  = `${info.th || 'ภาค ' + g.chapter}${info.years ? ' · ' + info.years : ''}`;
+
+      const btn = document.createElement('button');
+      btn.className = 'chapbtn';
+      btn.dataset.chapter = g.chapter;
+      btn.style.flexGrow = g.items.length;
+      btn.title = cap;
+      btn.innerHTML = `<b>${SHORT[g.chapter] ?? g.chapter}</b><i>${info.years || ''}</i>`;
+      btn.onclick = () => E.goTo(g.first, 'scrub');
+      strip.append(btn);
+
+      const grp = document.createElement('div');
+      grp.className = 'tgrp';
+      grp.style.flexGrow = g.items.length;
+      grp.dataset.chapter = g.chapter;
+      grp.title = cap;
+      for (const i of g.items){
+        const b = E.beats[i];
+        const cell = document.createElement('button');
+        cell.className = 'tcell';
+        cell.dataset.i = i;
+        cell.title = `${b.year} · ${b.title}`;
+        cell.onclick = () => E.goTo(i, 'scrub');
+        grp.append(cell);
+      }
+      track.append(grp);
+    }
   }
 
   function buildHud(){
@@ -106,6 +130,12 @@ TK.ui = (function(){
       c.classList.toggle('done', i <  ev.index);
       c.classList.toggle('now',  i === ev.index);
     });
+    document.querySelectorAll('.chapbtn').forEach(c =>
+      c.classList.toggle('now', +c.dataset.chapter === b.chapter));
+
+    /* เลื่อนช่องปัจจุบันให้อยู่ในสายตาเสมอ ตอนแถบยาว ๆ */
+    const cur = document.querySelector('.tcell.now');
+    if (cur) cur.scrollIntoView({block:'nearest', inline:'nearest'});
 
     /* HUD: ตัวเลขจากเนื้อเรื่อง + จำนวนภูมิภาคที่ถือครองจริง */
     const hud = ev.hud, t = ev.tally, total = t.han + t.wei + t.wu + t.none;

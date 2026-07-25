@@ -19,8 +19,11 @@ TK.map = (function(){
 
   let svg, layers = {}, host;
   let vb = { x:0, y:0, w:W, h:H };
-  let camCancel = null, relayoutRaf = null;
+  let camCancel = null, scaleCache = null;
   let forceLabels = new Set();
+  /* ต้องเก็บ timer กับ tween ของลูกศรไว้ยกเลิก ไม่งั้นกดต่อไปรัว ๆ
+     แอนิเมชันของฉากเก่าจะค้างวิ่งทับกันไปเรื่อย ๆ จนเครื่องหน่วง */
+  let mkTimers = [], mkTweens = [];
   const regionEl = {}, pinEl = {}, labelEl = {};
 
   /* ── สัญลักษณ์กองทัพ (DECISIONS §6) ── */
@@ -57,6 +60,7 @@ TK.map = (function(){
     bindPanZoom();
     vb = fitBox(0, 0, W, H);        // เริ่มที่ทั้งแผ่นดิน โดยสัดส่วนตรงกับกล่อง
     applyVB();
+    relayout();
     return api;
   }
 
@@ -99,10 +103,26 @@ TK.map = (function(){
     }
   }
 
-  /* ── กล้อง: tween viewBox ── */
+  /* ── กล้อง: tween viewBox ──
+     applyVB ทำแค่เขียน attribute เดียว ห้ามเรียก relayout ที่นี่
+     เพราะระหว่าง tween มันจะยิงวินาทีละ 60 ครั้ง × (122 หมุด + 26 ป้าย) = เครื่องตาย */
   function applyVB(){
-    svg.setAttribute('viewBox', `${vb.x.toFixed(1)} ${vb.y.toFixed(1)} ${vb.w.toFixed(1)} ${vb.h.toFixed(1)}`);
-    scheduleRelayout();
+    svg.setAttribute('viewBox',
+      `${vb.x.toFixed(1)} ${vb.y.toFixed(1)} ${vb.w.toFixed(1)} ${vb.h.toFixed(1)}`);
+  }
+
+  /* ระหว่างกล้องเคลื่อน ซ่อนป้ายไว้ก่อน แล้วค่อยจัดใหม่ตอนนิ่ง
+     — เร็วกว่ามาก และดูดีกว่าปล่อยให้ป้ายวิ่งสะบัดตามกล้อง */
+  let settleTimer = null;
+  function settleLabels(delay){
+    clearTimeout(settleTimer);
+    layers.labels.style.opacity = 0;
+    layers.pins.style.opacity   = 0;
+    settleTimer = setTimeout(() => {
+      relayout();
+      layers.labels.style.opacity = 1;
+      layers.pins.style.opacity   = 1;
+    }, delay);
   }
 
   /* จัดกรอบที่ขอ (x,y,w,h) ให้พอดีกล่องบนจอ โดยยังเห็นครบทั้งกรอบ */
@@ -123,20 +143,26 @@ TK.map = (function(){
   function flyTo(cam, ms){
     if (camCancel) camCancel();
     if (!cam) return;
+    const dur = ms === undefined ? 1100 : ms;
     const to = fitBox(cam[0], cam[1], cam[2], cam[3]);
-    camCancel = TK.engine.tween({...vb}, to, ms === undefined ? 1100 : ms,
+    settleLabels(dur + 60);            // จัดป้ายใหม่ทีเดียวตอนกล้องหยุด
+    camCancel = TK.engine.tween({...vb}, to, dur,
       cur => { vb = cur; applyVB(); });
   }
 
   const resetView = ms => flyTo([0,0,W,H], ms);
 
   /* ── หมุด / ลูกศร / การปะทะ ── */
-  function clearMarkers(){ layers.markers.replaceChildren(); }
+  function clearMarkers(){
+    mkTimers.forEach(clearTimeout);  mkTimers = [];
+    mkTweens.forEach(cancel => cancel()); mkTweens = [];
+    layers.markers.replaceChildren();
+  }
 
   function setMarkers(markers, animate){
     clearMarkers();
     forceLabels = new Set();
-    if (!markers) { scheduleRelayout(); return; }
+    if (!markers) return;
 
     markers.forEach((m, idx) => {
       if (m.type === 'pin'){
@@ -170,18 +196,19 @@ TK.map = (function(){
         gs.append(sh); g.append(gs);
         layers.markers.append(g);
 
-        const run = () => {
+        const settle = () => {
+          path.style.strokeDashoffset = 0;
+          const pt = path.getPointAtLength(L);
+          g.setAttribute('transform', `translate(${pt.x},${pt.y})`);
+        };
+        const run = () => mkTweens.push(
           TK.engine.tween({v:0},{v:1}, 1500 + idx*160, cur => {
             path.style.strokeDashoffset = L * (1 - cur.v);
             const pt = path.getPointAtLength(L * cur.v);
             g.setAttribute('transform', `translate(${pt.x},${pt.y})`);
-          });
-        };
-        if (animate === false){
-          path.style.strokeDashoffset = 0;
-          const pt = path.getPointAtLength(L);
-          g.setAttribute('transform', `translate(${pt.x},${pt.y})`);
-        } else setTimeout(run, 260 + idx*140);
+          }, settle));
+        if (animate === false) settle();
+        else mkTimers.push(setTimeout(run, 260 + idx*140));
       }
 
       if (m.type === 'clash'){
@@ -194,13 +221,6 @@ TK.map = (function(){
         layers.markers.append(g);
       }
     });
-    scheduleRelayout();
-  }
-
-  /* ── ป้ายชื่อ: เรียก labeler ใหม่ทุกครั้งที่กรอบภาพเปลี่ยน ── */
-  function scheduleRelayout(){
-    if (relayoutRaf) return;
-    relayoutRaf = requestAnimationFrame(() => { relayoutRaf = null; relayout(); });
   }
 
   function relayout(){
@@ -223,11 +243,15 @@ TK.map = (function(){
       const t = g.getAttribute('transform').replace(/ scale\([^)]*\)/,'');
       g.setAttribute('transform', `${t} scale(${mu.toFixed(3)})`);
     });
-    layers.pins.querySelectorAll('circle').forEach(c => {
-      const id = c.parentNode.dataset.id;
-      c.setAttribute('r', (TK.places[id].type==='capital' ? 5 : 3.4) * mu);
-      c.style.strokeWidth = (1.3 * mu) + 'px';
-    });
+    /* 122 หมุด — เขียนใหม่เฉพาะตอนสเกลเปลี่ยนจริง ไม่ใช่ทุกครั้งที่เรียก */
+    if (scaleCache === null || Math.abs(mu / scaleCache - 1) > 0.01){
+      scaleCache = mu;
+      layers.pins.querySelectorAll('circle').forEach(c => {
+        const id = c.parentNode.dataset.id;
+        c.setAttribute('r', (TK.places[id].type==='capital' ? 5 : 3.4) * mu);
+        c.style.strokeWidth = (1.3 * mu) + 'px';
+      });
+    }
 
     const res = TK.labeler.layout(TK.places, vb, screenW, {
       force: forceLabels, fontPx: FONT_PX, pinR: 4,
@@ -269,6 +293,7 @@ TK.map = (function(){
       vb.y = p.y - (p.y - vb.y) * (nh/vb.h);
       vb.w = nw; vb.h = nh;
       applyVB();
+      settleLabels(160);          // จัดป้ายใหม่ตอนหยุดหมุนล้อ
     }, {passive:false});
 
     host.addEventListener('pointerdown', e => {
@@ -279,12 +304,17 @@ TK.map = (function(){
     });
     host.addEventListener('pointermove', e => {
       if (!from) return;
+      if (!from.moved){ from.moved = true; layers.labels.style.opacity = 0;
+                        layers.pins.style.opacity = 0; }
       const sc = vb.w / (host.clientWidth || 1);
       vb.x = from.vx - (e.clientX - from.mx) * sc;
       vb.y = from.vy - (e.clientY - from.my) * sc;
       applyVB();
     });
-    const end = () => { from = null; host.classList.remove('grabbing'); };
+    const end = () => {
+      if (from) settleLabels(60);   // ปล่อยเมาส์แล้วค่อยจัดป้าย
+      from = null; host.classList.remove('grabbing');
+    };
     host.addEventListener('pointerup', end);
     host.addEventListener('pointercancel', end);
 
@@ -293,6 +323,8 @@ TK.map = (function(){
       const c = { x: vb.x + vb.w/2, y: vb.y + vb.h/2 };
       const f = fitBox(c.x - vb.w/2, c.y - vb.h/2, vb.w, vb.w * fitAR());
       vb = f; applyVB();
+      scaleCache = null;            // สัดส่วนเปลี่ยน ต้องคำนวณขนาดหมุดใหม่
+      settleLabels(180);
     });
   }
 

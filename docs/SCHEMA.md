@@ -74,6 +74,21 @@ window.TK.routes = {
 
 ## data/timeline.js — แกนหลักของเรื่อง
 
+> ⚠ **ตั้งแต่เฟส 3 ไฟล์นี้ถูกสร้างอัตโนมัติ ห้ามแก้ตรง ๆ**
+> แหล่งจริงคือ `data/_part1.js` (บทนำ–ภาคสอง) · `_part2.js` (ภาคสาม–ห้า) · `_part3.js` (ภาคหก–ส่งท้าย)
+> แก้ที่ไฟล์ `_partN` แล้วสั่งสร้างใหม่:
+>
+> ```
+> node tools/build_timeline.js
+> ```
+>
+> เครื่องนี้ไม่มี `node` ใน PATH — ใช้ตัวที่ติดมากับ playwright:
+> `%LOCALAPPDATA%\ms-playwright-go\1.50.1\node.exe tools\build_timeline.js`
+>
+> ตัวสร้างจะตรวจก่อนเขียนเสมอ ถ้าไม่ผ่านจะไม่ทับไฟล์เดิม:
+> id ซ้ำ · regionId/placeId/routeId มีจริงไหม · ทุก beat มี fact ไหม · ภาค/ปีเรียงถูกไหม ·
+> ศึกอยู่ใน Tier A แปดศึกไหม · **สะสม mapDelta ทั้งเรื่องแล้วต้องจบที่ฮั่นถือครบทุกเขต**
+
 ```js
 window.TK.timeline = [
   {
