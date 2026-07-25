@@ -152,14 +152,27 @@ TK.battle = (function(){
       const p = mk('path',{d:a.move, fill:'none', stroke:'none'});
       gFx.append(p);
       const L = p.getTotalLength();
-      /* วาดรอยทางเดินไว้ให้เห็นว่าเคลื่อนไปทางไหน */
+
+      /* ⚠ กันกองทัพ "วาร์ป"
+         หน่วยอาจไม่ได้อยู่ตรงจุดเริ่มที่เขียนไว้ในไฟล์ เพราะเพิ่งโดนดันถอยจากการปะทะ
+         ถ้าดึงไปวางที่จุดเริ่มของ path เลย มันจะกระโดด
+         → ออกตัวจาก "ตำแหน่งจริงตอนนี้" แล้วค่อย ๆ กลืนเข้าหาเส้นทางที่เขียนไว้
+           ระยะเบี่ยงลดจากเต็มเหลือศูนย์เมื่อถึงปลายทาง จึงออกตัวเนียนและจบตรงจุดที่กำหนดเป๊ะ */
+      const p0 = p.getPointAtLength(0);
+      const dx = u.x - p0.x, dy = u.y - p0.y;
+
+      /* รอยทางเดิน — เลื่อนตามระยะเบี่ยงด้วย จะได้เริ่มจากใต้เท้าหน่วยจริง ๆ */
       const trail = mk('path',{d:a.move, class:'bt-trail',
         stroke:TK.factions[u.side].color});
       trail.style.strokeDasharray = L; trail.style.strokeDashoffset = L;
       gFx.append(trail);
-      const step = v => { const pt = p.getPointAtLength(L*v);
-        u.x = pt.x; u.y = pt.y; place(u);
-        trail.style.strokeDashoffset = L*(1-v); };
+
+      const step = v => {
+        const pt = p.getPointAtLength(L*v), k = 1 - v;
+        u.x = pt.x + dx*k; u.y = pt.y + dy*k; place(u);
+        trail.setAttribute('transform', `translate(${(dx*k).toFixed(1)},${(dy*k).toFixed(1)})`);
+        trail.style.strokeDashoffset = L*(1-v);
+      };
       if (instant){ step(1); done(); }
       else tweens.push(TK.engine.tween({v:0},{v:1}, ms, c => step(c.v), done));
       return;
@@ -177,12 +190,19 @@ TK.battle = (function(){
       /* ยกแถบขึ้นเหนือแนวปะทะ ไม่งั้นทับคูดิน/ถนนจนอ่านไม่ออก */
       const bar = mk('g',{class:'bt-press', transform:`translate(${mx},${my - 46})`});
       const bw = 68;
+
+      /* ⚠ สีในแถบต้องเรียงตาม "ตำแหน่งจริงบนแผนที่" ไม่ใช่ตามว่าใครเป็นคนเริ่มปะทะ
+         ไม่งั้นฝ่ายที่ยืนขวาจะมีสีโผล่อยู่ซ้าย คนดูอ่านผิดทันที */
+      const uOnLeft  = u.x <= foe.x;
+      const leftSide  = uOnLeft ? u.side : foe.side;
+      const rightSide = uOnLeft ? foe.side : u.side;
+
       bar.append(mk('rect',{x:-bw/2,y:-5,width:bw,height:10,rx:5,class:'bt-press-bg'}));
-      const foeFill = mk('rect',{x:-bw/2,y:-5,width:bw,height:10,rx:5,
-        fill:TK.factions[foe.side].color, opacity:.85});
+      bar.append(mk('rect',{x:-bw/2,y:-5,width:bw,height:10,rx:5,
+        fill:TK.factions[rightSide].color, opacity:.85}));
       const fill = mk('rect',{x:-bw/2,y:-5,width:bw/2,height:10,rx:5,
-        fill:TK.factions[u.side].color});
-      bar.append(foeFill, fill);
+        fill:TK.factions[leftSide].color});
+      bar.append(fill);
       gFx.append(bar);
 
       const x0=u.x, y0=u.y, fx0=foe.x, fy0=foe.y;
@@ -193,8 +213,10 @@ TK.battle = (function(){
         u.x = x0 + ux*(osc + drift);  u.y = y0 + uy*(osc + drift);
         foe.x = fx0 + ux*(osc + drift)*0.6; foe.y = fy0 + uy*(osc + drift)*0.6;
         place(u); place(foe);
-        const r = Math.max(.08, Math.min(.92, 0.5 + push*t*0.55));
-        fill.setAttribute('width', bw*r);
+        /* uShare = ส่วนแบ่งของฝ่ายที่เรียก clash · push ลบ = ฝ่ายนี้เสียเปรียบ
+           แล้วแปลงเป็นส่วนแบ่งของ "ฝ่ายซ้าย" ตามตำแหน่งจริง */
+        const uShare = Math.max(.08, Math.min(.92, 0.5 + push*t*0.55));
+        fill.setAttribute('width', bw * (uOnLeft ? uShare : 1 - uShare));
       };
       if (instant){ step(1); done(); }
       else tweens.push(TK.engine.tween({t:0},{t:1}, ms, c => step(c.t), done));
