@@ -22,7 +22,8 @@ if (fs.existsSync(BDIR))
     .forEach(f => require(path.join(BDIR,f)));
 const TK = global.window.TK;
 
-const VALID_ACTS = ['move','clash','shrink','rout','spawn','despawn','burn','siege','label'];
+const VALID_ACTS = ['move','clash','shrink','rout','spawn','despawn','burn','siege','label',
+                    'show','hide'];
 const MOVES = a => !!(a.move || a.clash || a.spawn);
 const size  = s => 9 + Math.sqrt(s)/11;
 
@@ -58,6 +59,9 @@ function checkBattle(id){
     defs[u.id] = u;
   }
   const reserveIds = new Set((B.reserves||[]).map(u => u.id));
+
+  /* ── id ของภูมิประเทศที่ act show/hide เรียกได้ ── */
+  const terrainIds = new Set((B.terrain||[]).filter(t => t.id).map(t => t.id));
 
   /* ── ป้ายป้อม ── */
   const fortLabels = (B.terrain||[]).filter(t => t.kind==='fort' && t.label)
@@ -114,6 +118,10 @@ function checkBattle(id){
         if (a.despawn && u) u.on = false;
         if (a.burn && (a.burn.length !== 2)) E(tag, 'burn ต้องเป็น [x,y]', '');
         if (a.siege && !defs[a.siege]) E(tag, `siege อ้างถึงหน่วยที่ไม่มี: "${a.siege}"`, '');
+        for (const k of ['show','hide'])
+          if (a[k] && !terrainIds.has(a[k]))
+            E(tag, `${k} อ้างถึงภูมิประเทศที่ไม่มี id นั้น: "${a[k]}"`,
+              'ใส่ id:"..." ให้ terrain ชิ้นนั้นก่อน');
       }
     }
 

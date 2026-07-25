@@ -20,6 +20,7 @@ TK.battle = (function(){
   let B = null;                 // ข้อมูลศึกปัจจุบัน
   let svg, gTerrain, gFx, gUnits, gLabels;
   let U = {};                   // สถานะหน่วยตอนนี้ { id: {x,y,strength,size,el,...} }
+  let T = {};                   // ภูมิประเทศที่มี id ไว้ให้ act show/hide เรียกใช้
   let phase = -1, busy = false, playing = false;
   let tweens = [], timers = [];
   let onExit = null;
@@ -55,7 +56,9 @@ TK.battle = (function(){
     gTerrain = mk('g'); gFx = mk('g'); gUnits = mk('g'); gLabels = mk('g');
     svg.append(gTerrain, gFx, gUnits, gLabels);
 
+    T = {};
     for (const t of (B.terrain || [])){
+      const before = gTerrain.childNodes.length;
       if (t.kind === 'fort'){
         const g = mk('g',{class:'bt-fort', transform:`translate(${t.at[0]},${t.at[1]})`});
         const c = t.side ? TK.factions[t.side].color : '#8b93a7';
@@ -68,6 +71,14 @@ TK.battle = (function(){
         gTerrain.append(g);
       } else {
         gTerrain.append(mk('path',{d:t.d, class:'bt-'+t.kind}));
+      }
+      /* ภูมิประเทศบางชิ้นต้องโผล่กลางศึก ไม่ใช่มีตั้งแต่แรก
+         เช่นค่ายเคลื่อนที่ที่ย้ายตำแหน่ง หรือกำแพงล้อมกำแพงที่เพิ่งสร้าง
+         ให้ใส่ id แล้วเรียกด้วย act show / hide */
+      const made = gTerrain.childNodes[before];
+      if (t.id && made){
+        T[t.id] = made;
+        if (t.hidden) made.style.display = 'none';
       }
     }
 
@@ -275,6 +286,18 @@ TK.battle = (function(){
 
   /* act ที่ไม่ผูกกับหน่วย */
   function runFree(a, instant, done){
+    /* show / hide — เปิดหรือปิดภูมิประเทศที่มี id กลางศึก */
+    if (a.show || a.hide){
+      const el = T[a.show || a.hide];
+      if (!el) return done();
+      if (a.hide){ el.style.display = 'none'; return done(); }
+      el.style.display = '';
+      if (instant){ el.style.opacity = 1; return done(); }
+      el.style.opacity = 0;
+      tweens.push(TK.engine.tween({o:0},{o:1}, a.ms || 700,
+        c => el.style.opacity = c.o, done));
+      return;
+    }
     if (a.burn){
       const g = mk('g',{class:'bt-burn', transform:`translate(${a.burn[0]},${a.burn[1]})`});
       for (let i=0;i<3;i++)
