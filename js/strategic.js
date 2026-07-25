@@ -45,6 +45,15 @@ TK.map = (function(){
     svg = mk('svg',{viewBox:`0 0 ${W} ${H}`, preserveAspectRatio:'xMidYMid meet', id:'tkmap'});
     host.append(svg);
 
+    /* หัวลูกศร — markerUnits ปริยายคือ strokeWidth ขนาดจึงคงที่บนจอตามเส้นไปเอง
+       fill:context-stroke ทำให้หัวลูกศรได้สีเดียวกับเส้นโดยไม่ต้องสร้าง marker ต่อฝ่าย */
+    const defs = mk('defs');
+    const head = mk('marker',{id:'ahead', viewBox:'0 0 10 10', refX:8, refY:5,
+      markerWidth:4.2, markerHeight:4.2, orient:'auto-start-reverse'});
+    head.append(mk('path',{d:'M 0,0 L 10,5 L 0,10 z', fill:'context-stroke'}));
+    defs.append(head);
+    svg.append(defs);
+
     svg.append(mk('image',{href:'assets/map.jpg', x:0, y:0, width:W, height:H, id:'basemap'}));
     for (const name of ['regions','routes','markers','pins','labels'])
       svg.append(layers[name] = mk('g',{id:'L-'+name}));
@@ -182,29 +191,42 @@ TK.map = (function(){
       if (m.type === 'arrow'){
         const rt = TK.routes[m.route]; if (!rt) return;
         const col = TK.factions[m.side].color;
-        const path = mk('path',{d:rt.d, class:'mk-route', stroke:col});
+        /* สองธงนี้แยกกันเด็ดขาด อย่าให้อันหนึ่งลากอีกอัน:
+             reverse = ทิศทาง — วิ่งย้อนเส้นทาง (ปลายทาง → ต้นทาง)
+             retreat = ความหมาย — เป็นการถอยทัพ มีผลแค่หน้าตา
+           การถอยไม่ได้แปลว่าต้องย้อนเส้นทางเสมอ เช่น กุยห้วยถอย "ไปยัง" ตันฉอง
+           ซึ่งเป็นทิศเดียวกับที่ route วางไว้อยู่แล้ว */
+        const back = !!m.reverse;
+        const path = mk('path',{d:rt.d, stroke:col,
+          class:'mk-route' + (m.retreat ? ' retreat' : '')});
+        path.setAttribute(back ? 'marker-start' : 'marker-end', 'url(#ahead)');
         layers.markers.append(path);
         const L = path.getTotalLength();
         path.style.strokeDasharray  = L;
-        path.style.strokeDashoffset = L;
+        path.style.strokeDashoffset = back ? -L : L;
 
         /* ชั้นนอกรับ translate ชั้นในรับ scale — relayout() ปรับ scale ให้ขนาดคงที่บนจอ */
-        const g  = mk('g',{class:'mk-unit'});
+        const g  = mk('g',{class:'mk-unit' + (m.retreat ? ' retreat' : '')});
         const gs = mk('g',{class:'mk-unit-s'});
         const sh = unitShape(m.unit || 'square', 9);
-        sh.setAttribute('fill', col);
+        if (m.retreat){ sh.setAttribute('fill','none');
+                        sh.setAttribute('stroke',col);
+                        sh.setAttribute('stroke-width',3); }
+        else            sh.setAttribute('fill', col);
         gs.append(sh); g.append(gs);
         layers.markers.append(g);
 
+        const at = v => path.getPointAtLength(L * (back ? 1 - v : v));
         const settle = () => {
           path.style.strokeDashoffset = 0;
-          const pt = path.getPointAtLength(L);
+          const pt = at(1);
           g.setAttribute('transform', `translate(${pt.x},${pt.y})`);
         };
         const run = () => mkTweens.push(
           TK.engine.tween({v:0},{v:1}, 1500 + idx*160, cur => {
-            path.style.strokeDashoffset = L * (1 - cur.v);
-            const pt = path.getPointAtLength(L * cur.v);
+            const rest = L * (1 - cur.v);
+            path.style.strokeDashoffset = back ? -rest : rest;
+            const pt = at(cur.v);
             g.setAttribute('transform', `translate(${pt.x},${pt.y})`);
           }, settle));
         if (animate === false) settle();

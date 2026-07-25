@@ -51,6 +51,9 @@ body{
 
 .mk-route{fill:none; stroke-width:4; stroke-linecap:round; opacity:.95;
   filter:drop-shadow(0 0 4px rgba(0,0,0,.6))}
+/* ถอยทัพ: เส้นจางกว่าและหน่วยเป็นโครงกลวง ให้อ่านออกทันทีว่าไม่ใช่การบุก */
+.mk-route.retreat{opacity:.6}
+.mk-unit.retreat{opacity:.85}
 .mk-unit{filter:drop-shadow(0 1px 3px rgba(0,0,0,.8))}
 .mk-clash-ring{fill:none; stroke:#ffcf5c; stroke-width:2.5; opacity:.9;
   animation:ring 1.6s ease-out infinite}
