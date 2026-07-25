@@ -88,16 +88,24 @@ TK.ui = (function(){
     $('#btnPrev').onclick  = () => E.prev();
     $('#btnReset').onclick = () => TK.map.resetView(900);
     $('#fact').onclick     = () => $('#factNote').classList.toggle('open');
+    /* ซูมแผนที่ใหญ่เข้าไปที่จุดเกิดศึกก่อน แล้วค่อยให้แผนที่ยุทธวิธีเฟดขึ้นมาทับ
+       ให้รู้สึกเหมือนซูมต่อเนื่อง ไม่ใช่กระโดดไปอีกหน้า (DECISIONS §5) */
     $('#btnBattle').onclick = () => {
-      const id = E.beat.battle;
-      alert(`เฟส 4 จะทำระบบสมรภูมิที่นี่\n\nศึก: ${id}\n\n` +
-            `ตอนนี้เป็นแค่ปุ่มพิสูจน์ว่า schema field "battle" ทำงาน`);
+      const b  = E.beat;
+      const bd = (TK.battles || {})[b.battle];
+      const back = () => TK.map.flyTo(b.camera, 800);
+      if (bd && bd.anchor){
+        TK.map.flyTo([bd.anchor[0]-95, bd.anchor[1]-80, 190, 160], 650);
+        setTimeout(() => TK.battle.open(b.battle, back), 680);
+      } else TK.battle.open(b.battle, back);
     };
     document.addEventListener('keydown', e => {
+      if (!document.getElementById('battle').hidden) return;   // อยู่ในสมรภูมิ ปล่อยให้ battle.js คุมคีย์
       if (e.key === 'ArrowRight' || e.key === ' '){ e.preventDefault(); E.next(); }
       if (e.key === 'ArrowLeft')  { e.preventDefault(); E.prev(); }
       if (e.key === 'Home')       { e.preventDefault(); E.goTo(0); }
       if (e.key === 'Escape')     { TK.map.resetView(900); }
+      if (e.key === 'Enter' && E.beat.battle){ e.preventDefault(); $('#btnBattle').click(); }
     });
   }
 

@@ -47,19 +47,60 @@
   </div>
 </aside>
 
+<!-- ══ โหมดสมรภูมิ — แผนที่ยุทธวิธี วาดเวกเตอร์ล้วน ไม่ใช้ภาพ (DECISIONS §5) ══ -->
+<div id="battle" hidden>
+  <div class="bwrap">
+    <header class="bhead">
+      <div>
+        <h2 id="bTitle"></h2>
+        <span id="bYear"></span>
+      </div>
+      <button id="bClose">✕ กลับสู่แผนที่ใหญ่</button>
+    </header>
+
+    <div class="bmain">
+      <svg id="bsvg" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid meet"></svg>
+      <div class="bside">
+        <div class="bsidehead">กำลังพลในสมรภูมิ</div>
+        <div id="bRoster"></div>
+        <div class="blegend">
+          <span><i class="bchip s-triangle"></i> ทหารม้า</span>
+          <span><i class="bchip s-square"></i> ทหารราบ</span>
+          <span><i class="bchip s-hex"></i> กองเรือ</span>
+          <span><i class="bchip s-circle"></i> ป้อม/คลัง</span>
+        </div>
+      </div>
+    </div>
+
+    <footer class="bfoot">
+      <div id="bDots"></div>
+      <div id="bPhaseNo"></div>
+      <p id="bPhaseTxt"></p>
+      <div class="bctrl">
+        <button id="bPrev">◀ ย้อน</button>
+        <button id="bPlay">▶ เล่นต่อเนื่อง</button>
+        <button id="bNext">ระยะถัดไป ▶</button>
+      </div>
+    </footer>
+  </div>
+</div>
+
 <!-- data ต้องมาก่อน engine เสมอ (DECISIONS กฎ 3 — ไม่มี fetch จะได้เปิดแบบ file:// ได้) -->
 <script src="data/names.js"></script>
 <script src="data/places.js"></script>
 <script src="data/geo.js"></script>
 <script src="data/routes.js"></script>
 <script src="data/timeline.js"></script>
+<script src="data/battles/jieting228.js"></script>
 
 <script src="js/labeler.js"></script>
 <script src="js/engine.js"></script>
 <script src="js/strategic.js"></script>
+<script src="js/battle.js"></script>
 <script src="js/ui.js"></script>
 <script>
   TK.map.init(document.getElementById('stage'));
+  TK.battle.bind();
   TK.ui.init();
 </script>
 </body>
