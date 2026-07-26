@@ -68,7 +68,13 @@ TK.engine = (function(){
     const keys = Object.keys(to);
     (function step(now){
       if (cancelled) return;
-      const t = Math.min(1, (now - t0) / ms), e = ease(t);
+      /* ⚠ ต้องหนีบทั้งสองด้าน ไม่ใช่แค่ Math.min(1, …)
+         requestAnimationFrame ส่ง timestamp ของ "ตอนเฟรมเริ่ม" ซึ่งเก่ากว่า
+         performance.now() ที่เพิ่งอ่านไปตอนตั้ง t0 ได้ → now - t0 ติดลบ
+         ease เป็น 4t³ ช่วง t<.5 ค่าติดลบจึงไม่ได้แค่เพี้ยนนิดหน่อย มันระเบิด
+         (วัดจริงตอนกดปุ่มรัว ๆ: t = -4.72 → ease = -421.8 กล้องกระเด็นไป
+          viewBox กว้าง -14,919,678 วงปะทะถูกสเกลเป็น 321,582px ทับจอเป็นสีทองทั้งแผ่น) */
+      const t = Math.min(1, Math.max(0, (now - t0) / ms)), e = ease(t);
       const cur = {};
       for (const k of keys) cur[k] = from[k] + (to[k] - from[k]) * e;
       onStep(cur, t);
