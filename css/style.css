@@ -164,6 +164,13 @@ aside{grid-area:side; background:var(--panel); border-left:1px solid var(--line)
 #nowchap{color:var(--gold); font-size:12.5px; font-weight:700; letter-spacing:.3px}
 #nowyear{color:var(--dim); font-size:11.5px; white-space:nowrap}
 
+/* เครดิตแผนที่ — DECISIONS §2 บังคับให้แสดงท้ายหน้าเสมอ ห้ามซ่อนแม้บนจอแคบ
+   flex:none กันไม่ให้โดนบีบหายตอนคอลัมน์นิยายยาว */
+.credit{flex:none; padding:7px var(--pad) 9px; border-top:1px solid var(--line);
+  font-size:10.5px; line-height:1.55; color:var(--dim)}
+.credit a{color:var(--dim); text-decoration:underline; text-underline-offset:2px}
+.credit a:hover{color:var(--gold)}
+
 /* ══ นิยาย ══ */
 .body{flex:1 1 0; min-height:0; overflow-y:auto; padding:8px var(--pad) 0;
   scroll-behavior:smooth}
