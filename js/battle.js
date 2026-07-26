@@ -59,13 +59,31 @@ TK.battle = (function(){
     T = {};
     for (const t of (B.terrain || [])){
       const before = gTerrain.childNodes.length;
-      if (t.kind === 'fort'){
+      /* ด่าน — สัญลักษณ์คนละอย่างกับป้อม เพราะเล่าคนละเรื่อง
+         ป้อม = ที่มั่นที่ยึดครองได้ · ด่าน = ช่องแคบที่ใครคุมอยู่ก็ปิดทางได้
+         วาดเป็นวงเล็บสองข้างประกบช่องทาง แบบเดียวกับที่แผนที่ต้นฉบับใช้ */
+      if (t.kind === 'pass'){
+        const g = mk('g',{class:'bt-pass', transform:`translate(${t.at[0]},${t.at[1]})`});
+        const c = t.side ? TK.factions[t.side].color : '#c9a227';
+        g.append(mk('path',{d:'M -20,-22 L -8,-22 L -8,-8 L -2,-8 L -2,8 L -8,8 L -8,22 L -20,22',
+                            fill:'none', stroke:c, 'stroke-width':4, 'stroke-linejoin':'round'}));
+        g.append(mk('path',{d:'M 20,-22 L 8,-22 L 8,-8 L 2,-8 L 2,8 L 8,8 L 8,22 L 20,22',
+                            fill:'none', stroke:c, 'stroke-width':4, 'stroke-linejoin':'round'}));
+        if (t.label){ const x = mk('text',{y:-32, class:'bt-fortlabel',
+                        fill: t.side ? TK.factions[t.side].text : '#E0C466'});
+                      x.textContent = t.label; g.append(x); }
+        gTerrain.append(g);
+      }
+      else if (t.kind === 'fort'){
         const g = mk('g',{class:'bt-fort', transform:`translate(${t.at[0]},${t.at[1]})`});
         const c = t.side ? TK.factions[t.side].color : '#8b93a7';
-        g.append(mk('rect',{x:-16,y:-16,width:32,height:32,rx:3,fill:'none',
-                            stroke:c,'stroke-width':3}));
-        g.append(mk('path',{d:'M -16,-16 L 16,16 M 16,-16 L -16,16',
-                            fill:'none', stroke:c,'stroke-width':1.4,opacity:.55}));
+        /* กำแพงทึบ + หอมุมสี่มุม ให้อ่านออกว่าเป็นสิ่งปลูกสร้าง ไม่ใช่แค่กล่องกากบาท */
+        g.append(mk('rect',{x:-16,y:-16,width:32,height:32,rx:2,
+                            fill:c, 'fill-opacity':.22, stroke:c,'stroke-width':3}));
+        [[-16,-16],[16,-16],[-16,16],[16,16]].forEach(([x,y]) =>
+          g.append(mk('rect',{x:x-4, y:y-4, width:8, height:8, fill:c})));
+        g.append(mk('path',{d:'M -16,-5 L 16,-5 M -16,5 L 16,5',
+                            fill:'none', stroke:c,'stroke-width':1.4,opacity:.5}));
         /* ป้ายใช้สีเวอร์ชันสว่าง ไม่ใช่สีเดียวกับกรอบ — สีระบายเข้มเกินจะอ่านบนพื้นมืดไม่ออก */
         if (t.label){ const x = mk('text',{y:-24, class:'bt-fortlabel',
                         fill: t.side ? TK.factions[t.side].text : '#B4BAC4'});
@@ -401,7 +419,8 @@ TK.battle = (function(){
       stream: 'แม่น้ำ / ลำธาร',
       road:   'ถนน',
       trench: 'คูดิน / แนวป้องกัน',
-      fort:   'ป้อม / คลังเสบียง'
+      fort:   'ป้อม / เมือง / คลังเสบียง',
+      pass:   'ด่าน — ช่องแคบที่ปิดทางได้'
     };
     const kinds = [...new Set((B.terrain || []).map(t => t.kind))]
       .filter(k => TERRAIN_TH[k]);

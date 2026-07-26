@@ -1,4 +1,4 @@
-/* twogates230.js — วุ่ยบุกสองประตูพร้อมกัน ค.ศ. 230
+﻿/* twogates230.js — วุ่ยบุกสองประตูพร้อมกัน ค.ศ. 230
  *
  * แก่นของศึกนี้: **ฝ่ายบุกแพ้เพราะดินฟ้าอากาศ ไม่ใช่เพราะรบแพ้**
  * ดังนั้นภูมิประเทศต้องอธิบายด้วยตัวมันเองว่า "ทำไมฝนถึงฆ่าทัพยี่สิบหมื่นได้"
@@ -64,8 +64,8 @@ window.TK.battles.twogates230 = {
 
     /* ── ป้อม ── */
     /* ถงกวน กับ ค่ายกันท่าข้าม ไม่ใส่ label เพราะมีหน่วยยืนทับอยู่แล้ว */
-    { kind:"fort", at:[648,516], side:"han" },
-    { kind:"fort", at:[300,210], side:"han" },
+    { kind:"pass", at:[648,516], side:"han" }        /* ถงกวน — อุยเอี๋ยนยืนทับ ไม่ใส่ป้าย */,
+    { kind:"pass", at:[300,210], side:"han" }        /* ผู่ปั่น — เกียงอุยยืนทับ ไม่ใส่ป้าย */,
     { kind:"fort", at:[150,624],  side:"han", label:"เตียงอาน" },
     { kind:"fort", at:[1104,258], side:"wei", label:"คลังเสบียงเหอตง" },
     /* คลังริมน้ำ — วางไว้ใต้ตลิ่งฮวงโหตั้งใจ ให้เห็นว่าเสบียงวุ่ยผูกชีวิตไว้กับระดับน้ำ */
@@ -73,7 +73,7 @@ window.TK.battles.twogates230 = {
   ],
 
   units: [
-    { id:"simayi",   side:"wei", shape:"triangle", at:[1040,148], strength:100000, who:"simayi"   },
+    { id:"simayi",   side:"wei", shape:"square"   , at:[1040,148], strength:100000, who:"simayi"   },
     { id:"caozhen",  side:"wei", shape:"square",   at:[1140,528], strength:100000, who:"caozhen"  },
     { id:"weiyan",   side:"han", shape:"square",   at:[648,516],  strength:30000,  who:"weiyan"   },
     { id:"jiangwei", side:"han", shape:"square",   at:[300,210],  strength:20000,  who:"jiangwei" }

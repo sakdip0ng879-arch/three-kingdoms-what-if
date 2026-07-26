@@ -66,7 +66,7 @@ window.TK.battles.eastern255 = {
     { kind:"trench", d:"M 828,530 C 862,548 938,548 972,530" },
 
     /* ── ป้อม ── */
-    { kind:"fort", at:[92,470],   side:"han", label:"ถงกวน" },
+    { kind:"pass", at:[92,470],   side:"han", label:"ถงกวน" },
     { kind:"fort", at:[340,296],  side:"wei", label:"เหอตง" },
     { kind:"fort", at:[556,352],  side:"wei", label:"เสียนเปา" },
     { kind:"fort", at:[744,352],  side:"wei", label:"เหมียนฉือ" },

@@ -70,7 +70,7 @@ function checkBattle(id){
      (ของจริงวัดด้วย canvas.measureText อยู่ใน tools/selfcheck.js ซึ่งแม่นกว่า) */
   const THAI_MARKS = /[ัิ-ฺ็-๎]/g;
   const textW = s => s.replace(THAI_MARKS,'').length * 8.6 + 8;
-  const fortLabels = (B.terrain||[]).filter(t => t.kind==='fort' && t.label)
+  const fortLabels = (B.terrain||[]).filter(t => (t.kind==='fort' || t.kind==='pass') && t.label)
     .map(t => ({ label:t.label, x:t.at[0] - textW(t.label)/2, y:t.at[1]-40,
                  w:textW(t.label), h:22 }));
 

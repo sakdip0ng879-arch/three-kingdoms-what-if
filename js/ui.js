@@ -195,6 +195,31 @@ TK.ui = (function(){
     $('#factNote').textContent = b.factNote || '';
     $('#factNote').classList.remove('open');
 
+    /* ── ประกาศการเปลี่ยนมือของพื้นที่ ──
+       คนที่ไม่เคยอ่านเนื้อเรื่องจะไม่ทันสังเกตว่าเขตไหนเพิ่งเปลี่ยนสี
+       (เช่น "จู่ ๆ ง่อได้หับป๋า") ต้องบอกให้ชัดว่าอะไรเปลี่ยนมือจากใครไปใคร */
+    const chg = $('#change');
+    if (b.mapDelta && Object.keys(b.mapDelta).length){
+      const before = ev.index > 0 ? E.ownersAt(ev.index - 1) : {};
+      const rows = Object.entries(b.mapDelta)
+        .filter(([id, to]) => before[id] !== to)
+        .map(([id, to]) => {
+          const from = TK.factions[before[id]] || TK.factions.none;
+          const dest = TK.factions[to];
+          return `<div class="crow">
+              <span class="cname">${TK.regions[id].th}</span>
+              <span class="cfrom" style="color:${from.text}">${from.th}</span>
+              <span class="carrow">→</span>
+              <span class="cto" style="color:${dest.text}">${dest.th}</span>
+            </div>`;
+        });
+      chg.innerHTML = rows.length
+        ? `<div class="chead">พื้นที่เปลี่ยนมือ · ค.ศ. ${b.year}</div>${rows.join('')}` : '';
+      chg.classList.toggle('on', rows.length > 0);
+    } else {
+      chg.classList.remove('on');
+    }
+
     $('#btnBattle').hidden = !b.battle;
     $('#btnPrev').disabled = ev.index === 0;
     $('#btnNext').disabled = ev.index === E.length - 1;
@@ -212,13 +237,15 @@ TK.ui = (function(){
     const cur = document.querySelector('.tcell.now');
     if (cur) cur.scrollIntoView({block:'nearest', inline:'nearest'});
 
-    /* HUD: ตัวเลขจากเนื้อเรื่อง + จำนวนภูมิภาคที่ถือครองจริง */
+    /* HUD — แท่งกับตัวเลขวัดคนละอย่าง ต้องบอกให้ชัด ไม่งั้นดูเหมือนตัวเลขขยับช้ากว่าแท่ง
+       แท่ง = สัดส่วนเขตที่ถือครอง เปลี่ยนทุกครั้งที่พื้นที่เปลี่ยนมือ
+       ตัวเลข = ประชากรกับกำลังพลจากเนื้อเรื่อง ซึ่งต้นฉบับระบุไว้เป็นช่วง ๆ เท่านั้น */
     const hud = ev.hud, t = ev.tally, total = t.han + t.wei + t.wu + t.none;
     ['han','wei','wu'].forEach(k => {
       const pct = total ? (t[k] / total * 100) : 0;
       document.querySelector(`[data-bar="${k}"]`).style.width = pct.toFixed(1) + '%';
-      document.querySelector(`[data-num="${k}"]`).textContent =
-        hud && hud[k] ? `${hud[k].pop} ล้าน · ${hud[k].troops} หมื่น` : `${t[k]} เขต`;
+      const n = document.querySelector(`[data-num="${k}"]`);
+      n.textContent = `${t[k]} เขต` + (hud && hud[k] ? ` · ${hud[k].pop} ล้าน · ${hud[k].troops} หมื่น` : '');
     });
 
     /* แผนที่ — ตอนลากไล่ดูต้องสั้นและไม่เล่นแอนิเมชันลูกศร ไม่งั้นตามไม่ทันแล้วหน่วง */
