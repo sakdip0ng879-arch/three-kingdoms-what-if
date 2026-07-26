@@ -1,0 +1,15 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "tk-preview",
+      "runtimeExecutable": "C:\\Users\\sakdi\\AppData\\Local\\ms-playwright-go\\1.50.1\\node.exe",
+      "runtimeArgs": [
+        "C:\\Users\\sakdi\\AppData\\Local\\Temp\\claude\\C--Users-sakdi-OneDrive-Desktop-Three-Kingdoms-Project\\f7fe231e-707f-40fd-a38c-3a8bc00b3330\\scratchpad\\serve.js",
+        "C:\\Users\\sakdi\\OneDrive\\Desktop\\Three_Kingdoms_Project",
+        "8777"
+      ],
+      "port": 8777
+    }
+  ]
+}
