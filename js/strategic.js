@@ -77,7 +77,9 @@ TK.map = (function(){
     for (const id in TK.regions){
       const r = TK.regions[id];
       const c = TK.factions[r.owner].color;
-      const p = mk('path',{d:r.d, class:'region', fill:c, stroke:c});
+      /* fill = รูปที่ขยายจนชนกันเองและชนชายฝั่ง (data/geo_fill.js สร้างอัตโนมัติ)
+         ถ้าไม่มีไฟล์นั้นก็ถอยไปใช้รูปที่ลากด้วยมือใน geo.js ได้เลย ไม่พัง */
+      const p = mk('path',{d:r.fill || r.d, class:'region', fill:c, stroke:c});
       p.dataset.id = id;
       const t = mk('title'); t.textContent = r.th;
       p.append(t);

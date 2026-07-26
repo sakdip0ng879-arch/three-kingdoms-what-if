@@ -51,7 +51,10 @@ body{
 #tkmap path:not(.region){fill:none}
 
 #L-regions{opacity:.38}
-.region{stroke-width:34; stroke-linejoin:round;
+/* เคยเป็น 34 เพื่อ "พอง" รูปให้ไปปิดรอยต่อระหว่างโพลิกอนที่ลากด้วยมือแล้วไม่ชนกัน
+   ผลข้างเคียงคือมุมมนหมดจนดูเหมือนแต้มสี และสีล้นลงทะเล
+   ตอนนี้รูปมาจาก geo_fill.js ซึ่งชนกันเองพอดีอยู่แล้ว เหลือไว้ 6 พอกลบเส้นผมระหว่างเขต */
+.region{stroke-width:6; stroke-linejoin:round;
   transition:fill .9s ease, stroke .9s ease}
 .region.flip{animation:flip 1.1s ease}
 @keyframes flip{0%{filter:brightness(2.4)} 100%{filter:none}}
