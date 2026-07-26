@@ -2023,7 +2023,8 @@ window.TK.timeline = [
       380
     ],
     "mapDelta": {
-      "yangzhou": "han"
+      "yangzhou": "han",
+      "jiaozhou": "han"
     },
     "markers": [
       {
@@ -2076,9 +2077,6 @@ window.TK.timeline = [
       1650,
       1950
     ],
-    "mapDelta": {
-      "jiaozhou": "han"
-    },
     "markers": [
       {
         "type": "pin",
