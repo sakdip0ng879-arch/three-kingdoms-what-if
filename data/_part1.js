@@ -23,6 +23,9 @@ window.TK._part1 = [
          "จนดาวดวงหนึ่งร่วงลงที่ทุ่งอู่จ้างหยวนในฤดูใบไม้ร่วงปี 234",
     camera:[250,470,340,300],
     markers:[
+      /* ต้องมีลูกศรฮั่นด้วย ไม่งั้นเห็นแต่วุ่ยเดินเข้าไปปะทะในแผ่นดินของวุ่ยเอง
+         เนื้อเรื่องบอกอยู่แล้วว่าม้าเจ๊กนำทัพหน้าขึ้นไปตั้งค่ายบนเนินที่เกเต๋ง */
+      {type:"arrow", route:"qishan_jieting",  side:"han", unit:"square"},
       {type:"arrow", route:"changan_jieting", side:"wei", unit:"triangle"},
       {type:"clash", place:"jieting"}
     ],

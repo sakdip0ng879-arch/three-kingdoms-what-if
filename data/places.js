@@ -113,7 +113,9 @@ window.TK.places = {
   chenliu:   { th:"ตันลิว",   py:"Chenliu",  map:"Chen Liu (Da Liang)", x:1059, y:601, type:"city" },
   dingtao:   { th:"ติ้งเถา",  py:"Dingtao",  map:"Ding Tao",  x:1133, y:585, type:"town" },
   pengcheng: { th:"เผิงเฉิง", py:"Pengcheng", map:"Xu Zhou Peng Cheng (Yan)", x:1300, y:610, type:"city", chk:true },
-  xiangping: { th:"เซียงเพ้ง", py:"Xiangping", map:null,      x:1470, y:85,  type:"city", chk:true },
+  /* เดิมอยู่ที่ 1470,85 ซึ่งเป็นกลางอ่าวป๋อไห่ (สีน้ำ) ย้ายมาบนแผ่นดินฝั่งตะวันออกของอ่าว
+     แผนที่ต้นฉบับไม่มีป้ายเมืองนี้ พิกัดจึงเป็นการประมาณ แต่ต้องอย่างน้อยอยู่บนดิน */
+  xiangping: { th:"เซียงเพ้ง", py:"Xiangping", map:null,      x:1620, y:95,  type:"city", chk:true },
 
   /* ═══ อิจ๋ว / หวยหนำ — แนวรบง่อ ═══ */
   wancheng:  { th:"อ้วนเซีย", py:"Wancheng", map:"Jing Zhou Nan Yang (Wan Cheng)", x:921, y:738, type:"city" },
