@@ -84,7 +84,6 @@ $driver = @'
   /* โหมด beat=<id> — กระโดดตรง เร็วและนิ่ง ใช้ตรวจภาพของฉากใดฉากหนึ่ง */
   const b = TK.timeline.find(x => x.id === q.get('beat')) || TK.timeline[0];
   const i = TK.timeline.indexOf(b);
-  TK.engine.goTo(i, 'init');
 
   /* goTo ไม่เลื่อนคอลัมน์นิยายให้ (ปุ่มจริงเรียกผ่าน scrollTo ของ ui.js)
      ต้องเลื่อนเอง ไม่งั้นภาพจะเป็นแผนที่ฉากที่ 8 คู่กับเนื้อเรื่องฉากที่ 1
@@ -93,7 +92,17 @@ $driver = @'
   if (art) rd.scrollTop += art.getBoundingClientRect().top
                          - rd.getBoundingClientRect().top - rd.clientHeight * 0.35;
 
-  await wait(900);                      // ปล่อยให้สีแคว้นและกรอบโฟกัสจบก่อน
+  /* ⚠ ต้องเลื่อนก่อน แล้วค่อย goTo — ห้ามสลับ
+     การเลื่อนยิง scroll event ซึ่งไปเรียก pickCurrent ของ ui.js ที่คำนวณ
+     "ตอนที่กำลังอ่าน" ใหม่แล้วสั่ง goTo ทับ ถ้า goTo ก่อนจะได้ภาพคนละฉากกับที่ขอ
+     (เคยได้ภาพฉาก 16 ตอนสั่งถ่าย c2-07 มาแล้ว แล้วเกือบอ่านว่าแผนที่เพี้ยน) */
+  await wait(250);
+  TK.engine.goTo(i, 'init');
+
+  /* .region มี transition:fill .9s — เคยรอ 900ms พอดีเป๊ะ แล้วได้ภาพกลางทาง
+     ภาคเหนือออกมาเป็นสีวุ่ยทั้งแถบทั้งที่ HUD บอกว่าวุ่ยเหลือศูนย์เขต
+     เผลออ่านว่าเป็นบั๊กของแผนที่ไปแล้วรอบหนึ่ง — เผื่อไว้ให้ยาวกว่า transition ชัด ๆ */
+  await wait(1800);
   TK.map.setMarkers(b.markers, false);  // วางลูกศรที่ตำแหน่งสุดท้าย ไม่ต้องรอ tween
   document.title = 'READY ' + b.id;
 })();
