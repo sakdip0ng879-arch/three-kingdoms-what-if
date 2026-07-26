@@ -152,11 +152,12 @@ window.TK._part1 = [
          "เตียวคับผู้ไม่เคยแพ้เพราะโง่ ถอนทัพทันทีอย่างมีระเบียบกลับเข้ากวนจง ทิ้งหลงโหย่วไว้เบื้องหลัง",
     camera:[250,470,340,300],
     markers:[
+      /* ฉากนี้คือฉาก "รบ" — ต้องเห็นทั้งสองฝ่ายเดินเข้าหากันแล้วปะทะ
+         เคยเอาลูกศรบุกของเตียวคับออกไปเพราะฉากก่อนหน้ามีแล้ว ผลคือคนอ่านเห็นแต่
+         ฮั่นเดินเข้ามาและวุ่ยเดินออกไป ไม่เห็นว่ารบกันตรงไหน — การถอนไปอยู่ฉากถัดไป */
       {type:"arrow", route:"qishan_jieting",  side:"han", unit:"square"},
-      {type:"clash", place:"jieting"},
-      /* ลูกศรบุกของเตียวคับอยู่ในฉากก่อนหน้าแล้ว ฉากนี้เป็นฉากที่เขาถอน
-         จึงต้องเห็นทัพวุ่ยออกจากเกเต๋ง ไม่ใช่ค้างอยู่หน้าค่ายแล้วไปถอยเอาฉากหน้า */
-      {type:"arrow", route:"jieting_guanzhong", side:"wei", unit:"triangle", retreat:true}
+      {type:"arrow", route:"changan_jieting", side:"wei", unit:"triangle"},
+      {type:"clash", place:"jieting"}
     ],
     battle:"jieting228",
     fact:"mixed",
@@ -179,9 +180,11 @@ window.TK._part1 = [
     markers:[
       {type:"arrow", route:"longyou_sweep",    side:"han", unit:"square"},
       {type:"pin",   place:"longxi",           label:"ทนล้อมสามเดือน"},
-      {type:"arrow", route:"longyou_chencang", side:"wei", unit:"square", retreat:true},
-      /* ลูกศรวุ่ยเส้นบนเริ่มใกล้เทียนซุย เคยถูกอ่านผิดว่าเป็นการถอยจากศึกเกเต๋ง
-         ปักหมุดปลายทางบอกชื่อคนถอยไว้ ให้แยกออกจากการถอนของเตียวคับในฉากก่อน */
+      /* ฉากนี้คือฉาก "ถอย" และการถอยต้องออกจากเกเต๋ง ที่ซึ่งวุ่ยเพิ่งแพ้
+         เดิมใช้ longyou_chencang ซึ่งเริ่มห่างหมุดเทียนซุยแค่ 24 หน่วย
+         บนจอจึงดูเหมือนวุ่ยถอยจากเทียนซุย ทั้งที่ไม่เคยมีศึกที่นั่น
+         ปลายเส้นจบที่ตันฉองพอดีกับหมุด ลูกศรกับป้ายจึงเล่าเรื่องเดียวกัน */
+      {type:"arrow", route:"jieting_chencang", side:"wei", unit:"triangle", retreat:true},
       {type:"pin",   place:"chencang",         label:"กุยห้วยตั้งรับ"}
     ],
     hud:{ han:{pop:1.2,troops:12}, wei:{pop:4.3,troops:39}, wu:{pop:2.3,troops:20} },

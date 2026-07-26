@@ -304,15 +304,14 @@ window.TK.timeline = [
         "unit": "square"
       },
       {
-        "type": "clash",
-        "place": "jieting"
+        "type": "arrow",
+        "route": "changan_jieting",
+        "side": "wei",
+        "unit": "triangle"
       },
       {
-        "type": "arrow",
-        "route": "jieting_guanzhong",
-        "side": "wei",
-        "unit": "triangle",
-        "retreat": true
+        "type": "clash",
+        "place": "jieting"
       }
     ],
     "battle": "jieting228",
@@ -349,9 +348,9 @@ window.TK.timeline = [
       },
       {
         "type": "arrow",
-        "route": "longyou_chencang",
+        "route": "jieting_chencang",
         "side": "wei",
-        "unit": "square",
+        "unit": "triangle",
         "retreat": true
       },
       {
