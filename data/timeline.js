@@ -416,7 +416,7 @@ window.TK.timeline = [
   {
     "id": "c2-01",
     "chapter": 2,
-    "year": 229,
+    "year": 228,
     "season": "winter",
     "title": "ตันฉอง — โดดเดี่ยวกับฤดูหนาว",
     "voice": "watcher",

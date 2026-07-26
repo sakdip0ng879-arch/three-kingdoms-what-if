@@ -24,30 +24,22 @@
 
 <aside>
   <div class="head">
-    <div id="chapter"></div>
-    <div id="year"></div>
-    <h1 id="title"></h1>
+    <div id="nowchap"></div>
+    <div id="nowyear"></div>
   </div>
 
-  <div class="body">
-    <p id="text" class="text"></p>
-    <div id="change"></div>
-    <span id="fact" class="fact"></span>
-    <div id="factNote"></div>
-  </div>
+  <!-- นิยายทั้งเรื่องอยู่ในนี้ เลื่อนอ่านต่อเนื่อง แผนที่วิ่งตามที่อ่าน -->
+  <div class="body" id="reader"></div>
 
   <div class="hint">
-    ← → หรือ Space เดินเรื่อง · Enter เข้าสมรภูมิ · ล้อเลื่อนซูม · ลากแผนที่เพื่อแพน · Esc คืนมุมกล้อง<br>
-    <b>ลากแถบเวลาด้านล่างเพื่อไล่ดูพื้นที่เปลี่ยนมือตลอด 228–276</b>
+    <b>เลื่อนอ่านได้เลย — แผนที่จะวิ่งตามเนื้อเรื่อง</b><br>
+    ← → เลื่อนทีละตอน · Enter เข้าสมรภูมิ · ล้อเลื่อนซูมแผนที่ · Esc คืนมุมกล้อง
   </div>
 
   <div class="foot">
     <button id="btnPrev">◀ ย้อน</button>
-    <button id="btnNext">ต่อไป ▶</button>
+    <button id="btnNext">ตอนต่อไป ▶</button>
     <button id="btnReset" title="คืนมุมกล้องทั้งแผ่นดิน">⤢</button>
-  </div>
-  <div style="padding:0 18px 16px">
-    <button id="btnBattle" hidden>⚔ เข้าดูสมรภูมิ</button>
   </div>
 </aside>
 
