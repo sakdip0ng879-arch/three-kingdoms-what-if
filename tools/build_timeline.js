@@ -79,8 +79,11 @@ for (const b of beats){
 
   for (const k in (b.mapDelta || {})){
     if (!TK.regions[k]) err.push(`${at}: ไม่รู้จักเขต "${k}"`);
-    if (!['han','wei','wu'].includes(b.mapDelta[k]))
-      err.push(`${at}: เจ้าของต้องเป็น han|wei|wu ไม่ใช่ "${b.mapDelta[k]}"`);
+    /* none = แยกตัวเป็นอิสระ ไม่ได้ขึ้นกับสามก๊กสักฝ่าย (เช่นเลียวตั๋งของกงซุนยวนปี 238)
+       เอนจินรองรับมาตั้งแต่แรก — names.js มีสีให้ และ tally() ก็นับ none แยกไว้แล้ว
+       ขาดแค่ด่านนี้ที่ยังไม่ยอมให้ผ่าน */
+    if (!['han','wei','wu','none'].includes(b.mapDelta[k]))
+      err.push(`${at}: เจ้าของต้องเป็น han|wei|wu|none ไม่ใช่ "${b.mapDelta[k]}"`);
   }
 
   for (const m of (b.markers || [])){
