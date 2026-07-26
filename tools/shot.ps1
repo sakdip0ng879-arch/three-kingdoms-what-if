@@ -55,6 +55,17 @@ $driver = @'
   const rd = document.getElementById('reader');
   rd.style.scrollBehavior = 'auto';
 
+  /* ปิด transition ของสีแคว้นกับแอนิเมชันแฟลชตอนเปลี่ยนมือ
+     เคยไล่เพิ่มเวลารอจาก 900 เป็น 1800ms แล้วก็ยังจับภาพกลางทางอยู่ดี
+     (ฉากปิดที่ทุกแคว้นเปลี่ยนมือพร้อมกัน ออกมาเป็นแผนที่สามสีทั้งที่ HUD บอก 22/0/0)
+     การไล่รอเป็นการเดา — หยุดแอนิเมชันไปเลยคือคำตอบที่แน่นอน
+     นี่คือการแตะ "จังหวะ" ไม่ใช่ "การวาด" ภาพที่ได้จึงยังเป็นของจริงทุกพิกเซล */
+  const freeze = document.createElement('style');
+  freeze.textContent =
+    '.region{transition:none !important; animation:none !important}' +
+    '#L-labels,#L-pins{transition:none !important}';
+  document.head.append(freeze);
+
   /* โหมด next=N — กดปุ่ม "ตอนต่อไป" จริง ๆ N ครั้ง ใช้ตรวจว่าเส้นทางที่ผู้ใช้กดจริงทำงานครบ
      (ทั้งแผนที่และคอลัมน์นิยายต้องขยับไปด้วยกัน) */
   if (q.has('next')) {
