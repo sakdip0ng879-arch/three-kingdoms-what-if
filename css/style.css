@@ -375,3 +375,51 @@ button:disabled{opacity:.32; cursor:default}
   aside{border-left:0; border-top:1px solid var(--line)}
   #hud{width:210px; transform:scale(.92); transform-origin:left bottom}
 }
+
+/* ══ มือถือ ══
+   วัดที่ 500px แล้วเจอสองเรื่อง ไม่ใช่เรื่องที่เดาไว้จากการดูภาพ:
+   1. #track ล้น 279px — 71 ช่อง x min-width:5px + ช่องไฟ ยัดไม่ลงในราว 400px
+   2. ช่องอ่านเหลือสูง 105px ประมาณสี่บรรทัด เพราะแผนที่กิน 46vh แล้วยังมี
+      หัว + คำใบ้ + ปุ่ม + เครดิต มาแบ่งที่อีก
+   ส่วนตัวหนังสือไม่ได้ล้นขอบอย่างที่เห็นในภาพ — วัดแล้วพอดีกรอบ */
+@media (max-width:700px){
+  /* คืนที่ให้คนอ่าน แผนที่ยังใหญ่พอเห็นลูกศรเดินทัพ */
+  body{grid-template-rows:38vh minmax(0,1fr) auto}
+
+  /* คำใบ้เป็นปุ่มลูกศรกับล้อเมาส์ ซึ่งบนมือถือไม่มีทั้งคู่ — เอาที่คืนให้เนื้อเรื่อง */
+  .hint{display:none}
+
+  /* ปล่อยให้ช่องเล็กลงได้ตามจริง ไม่งั้นแถบเวลาดันตัวเองล้นจอ
+     ต้องล้าง padding ด้วย — .tcell เป็น <button> ที่เบราว์เซอร์ใส่ padding มาให้เอง
+     ลด min-width อย่างเดียวจึงยังล้นอยู่ 248px เพราะ 71 ปุ่มคูณ padding ปริยาย */
+  .tcell{min-width:0; padding:0}
+  #track{gap:2px}
+  .tgrp{gap:1px; padding:0 1px}
+  #chapstrip{gap:2px}
+  .chapbtn i{display:none}          /* ช่วงปีอ่านไม่ทันอยู่แล้วตอนกว้าง 40px */
+  #time{gap:8px; padding:6px 10px 8px}
+  #counter{min-width:44px; font-size:11px}
+
+  :root{--pad:12px}
+  .btitle{font-size:16px}
+  .text{font-size:15px; line-height:1.85}   /* อ่านบนมือถือต้องใหญ่กว่าเดสก์ท็อป */
+  /* -15/+13 บนเดสก์ท็อปมีไว้ให้เส้นทองของตอนที่กำลังอ่านออกไปอยู่นอกแนวข้อความ
+     พอ --pad เหลือ 12 มันดันข้อความไปชิดขอบจอจนอึดอัด ย่อระยะลงให้ได้ที่หายใจ */
+  .beat{padding:11px 0 16px 8px; margin-left:-8px}
+  #hud{width:158px; transform:scale(.78)}
+
+  /* ชื่อหน่วยในสมรภูมิเป็นหน่วยของ viewBox 1200 พอจอกว้าง 500 สเกลเหลือ 0.42
+     ตัวอักษร 14 จึงเหลือราว 6px บนจอจริง — ต้องดันขึ้นเป็นเท่าตัว */
+  .bu-name{font-size:22px; stroke-width:6px}
+  .bu-str{font-size:18px; stroke-width:5px}
+  .bt-fortlabel{font-size:20px; stroke-width:5px}
+  .bt-note{font-size:25px; stroke-width:7px}
+
+  /* โหมดสมรภูมิ — หัวกับแผงข้างต้องยอมย่อ ไม่งั้นโดนตัดขอบขวา */
+  .blong{display:none}
+  .bhead{padding:9px 11px}
+  .bhead h2{font-size:16px}
+  .bside{max-height:118px; overflow-y:auto; padding:9px; gap:6px}
+  .bfoot{padding:9px 11px}
+  #bPhaseTxt{font-size:12.5px; line-height:1.6}
+}
