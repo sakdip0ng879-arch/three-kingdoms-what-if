@@ -308,6 +308,9 @@ button:disabled{opacity:.32; cursor:default}
 .bchip.s-triangle{clip-path:polygon(50% 0,100% 100%,0 100%)}
 .bchip.s-hex{clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%)}
 .bchip.s-circle{border-radius:50%}
+/* ประทุนเกวียนกว้างกว่าสูง ถ้าบีบลงช่อง 11px เท่ารูปอื่นจะอ่านไม่ออกว่าเป็นหลังคาโค้ง */
+.bchip.s-wagon{width:15px;
+  clip-path:polygon(0 100%, 0 55%, 11% 22%, 29% 5%, 50% 0, 71% 5%, 89% 22%, 100% 55%, 100% 100%)}
 /* คำอธิบายเส้นภูมิประเทศ — ตัวอย่างเส้นวาดด้วย CSS ให้เหมือนของจริงบนแผนที่ */
 #bTerrainKey{display:flex; flex-direction:column; gap:6px}
 .tkey{display:flex; align-items:center; gap:9px; font-size:11.5px; color:var(--dim)}

@@ -40,6 +40,13 @@ TK.battle = (function(){
       return mk('polygon',{points:p.join(' ')});
     }
     if (kind === 'circle') return mk('circle',{r:s});
+    /* ประทุนเกวียน — ขบวนลำเลียงเสบียง (DECISIONS §6)
+       ท้องแบน ข้างตั้งตรง หลังคาโค้ง กว้างกว่าสูง แยกออกจากวงกลมได้ที่ระยะเล็กสุด
+       ต้องคืน element เดียว เพราะผู้เรียกยัด fill กับ class ใส่ค่าที่คืนไปตรง ๆ */
+    if (kind === 'wagon') return mk('polygon',{points:
+      [[-1.30,.62],[-1.30,-.10],[-1.02,-.62],[-.56,-.90],[0,-.98],
+       [.56,-.90],[1.02,-.62],[1.30,-.10],[1.30,.62]]
+      .map(([x,y]) => `${(x*s).toFixed(1)},${(y*s).toFixed(1)}`).join(' ')});
     return mk('rect',{x:-s, y:-s, width:s*2, height:s*2, rx:s*.14});
   }
 

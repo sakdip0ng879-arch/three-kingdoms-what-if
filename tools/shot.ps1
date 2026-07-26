@@ -68,6 +68,19 @@ $driver = @'
     return;
   }
 
+  /* โหมด battle=<id>&phase=N — เปิดโหมดสมรภูมิแล้วหยุดที่ระยะที่ขอ
+     goPhase(n, true) เล่นทุกระยะก่อนหน้าแบบทันที ภาพที่ได้จึงเป็นสภาพสะสมจริง
+     ไม่ใช่ระยะนั้นลอย ๆ — ใช้ตรวจว่าของที่ควรหายไปแล้ว (โซ่ หลักเหล็ก) หายจริง */
+  if (q.has('battle')) {
+    const bid = q.get('battle');
+    TK.battle.open(bid);
+    await wait(400);
+    TK.battle.goPhase(+(q.get('phase') || 0), true);
+    await wait(700);
+    document.title = 'READY ' + bid + ' phase ' + (q.get('phase') || 0);
+    return;
+  }
+
   /* โหมด beat=<id> — กระโดดตรง เร็วและนิ่ง ใช้ตรวจภาพของฉากใดฉากหนึ่ง */
   const b = TK.timeline.find(x => x.id === q.get('beat')) || TK.timeline[0];
   const i = TK.timeline.indexOf(b);
@@ -113,9 +126,11 @@ Start-Sleep -Milliseconds 600
 try {
   $n = 0
   foreach ($id in $Beat) {
-    # "next:7" = กดปุ่มตอนต่อไป 7 ครั้ง · อย่างอื่นถือเป็น id ของ beat
-    if ($id -match '^next:(\d+)$') { $qs = "next=$($Matches[1])"; $file = "next-$($Matches[1])" }
-    else                           { $qs = "beat=$id";            $file = $id }
+    # "next:7" = กดปุ่มตอนต่อไป 7 ครั้ง · "wuguan244@3" = สมรภูมิระยะที่ 3 · อย่างอื่นคือ id ของ beat
+    if     ($id -match '^next:(\d+)$')   { $qs = "next=$($Matches[1])"; $file = "next-$($Matches[1])" }
+    elseif ($id -match '^(.+)@(\d+)$')   { $qs = "battle=$($Matches[1])&phase=$($Matches[2])"
+                                           $file = "$($Matches[1])-p$($Matches[2])" }
+    else                                 { $qs = "beat=$id";            $file = $id }
     $png = Join-Path $Out "$file.png"
     # โปรไฟล์ใหม่ทุกครั้ง ใช้ซ้ำแล้ว Chrome จะไม่ยอมเขียนไฟล์รอบที่สอง
     $prof = Join-Path $Out ("prof-" + [guid]::NewGuid().ToString('N').Substring(0,8))

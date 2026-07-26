@@ -52,8 +52,11 @@ function checkBattle(id){
     if (u.who && !TK.people[u.who])
       E('—', `หน่วย "${u.id}" อ้างถึงคนที่ไม่มีใน names.js: "${u.who}"`,
         'ใช้ id จาก data/names.js เท่านั้น หรือใส่ name:"..." แทน');
-    if (!['triangle','square','hex','circle'].includes(u.shape))
-      E('—', `หน่วย "${u.id}" shape ไม่ถูก: "${u.shape}"`, 'ใช้ triangle|square|hex|circle');
+    /* รายการนี้ต้องตรงกับ shapeOf() ใน js\battle.js และตาราง DECISIONS §6
+       เติมรูปใหม่ที่โค้ดอย่างเดียวไม่พอ ต้องเติมทั้งสามที่ */
+    if (!['triangle','square','hex','circle','wagon'].includes(u.shape))
+      E('—', `หน่วย "${u.id}" shape ไม่ถูก: "${u.shape}"`,
+        'ใช้ triangle|square|hex|circle|wagon');
     if (!['han','wei','wu'].includes(u.side))
       E('—', `หน่วย "${u.id}" side ไม่ถูก: "${u.side}"`, 'ใช้ han|wei|wu');
     defs[u.id] = u;
