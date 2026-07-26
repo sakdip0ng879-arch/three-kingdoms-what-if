@@ -153,8 +153,10 @@ window.TK._part1 = [
     camera:[250,470,340,300],
     markers:[
       {type:"arrow", route:"qishan_jieting",  side:"han", unit:"square"},
-      {type:"arrow", route:"changan_jieting", side:"wei", unit:"triangle"},
-      {type:"clash", place:"jieting"}
+      {type:"clash", place:"jieting"},
+      /* ลูกศรบุกของเตียวคับอยู่ในฉากก่อนหน้าแล้ว ฉากนี้เป็นฉากที่เขาถอน
+         จึงต้องเห็นทัพวุ่ยออกจากเกเต๋ง ไม่ใช่ค้างอยู่หน้าค่ายแล้วไปถอยเอาฉากหน้า */
+      {type:"arrow", route:"jieting_guanzhong", side:"wei", unit:"triangle", retreat:true}
     ],
     battle:"jieting228",
     fact:"mixed",
@@ -177,7 +179,10 @@ window.TK._part1 = [
     markers:[
       {type:"arrow", route:"longyou_sweep",    side:"han", unit:"square"},
       {type:"pin",   place:"longxi",           label:"ทนล้อมสามเดือน"},
-      {type:"arrow", route:"longyou_chencang", side:"wei", unit:"square", retreat:true}
+      {type:"arrow", route:"longyou_chencang", side:"wei", unit:"square", retreat:true},
+      /* ลูกศรวุ่ยเส้นบนเริ่มใกล้เทียนซุย เคยถูกอ่านผิดว่าเป็นการถอยจากศึกเกเต๋ง
+         ปักหมุดปลายทางบอกชื่อคนถอยไว้ ให้แยกออกจากการถอนของเตียวคับในฉากก่อน */
+      {type:"pin",   place:"chencang",         label:"กุยห้วยตั้งรับ"}
     ],
     hud:{ han:{pop:1.2,troops:12}, wei:{pop:4.3,troops:39}, wu:{pop:2.3,troops:20} },
     fact:"fiction",

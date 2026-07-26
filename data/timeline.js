@@ -304,14 +304,15 @@ window.TK.timeline = [
         "unit": "square"
       },
       {
-        "type": "arrow",
-        "route": "changan_jieting",
-        "side": "wei",
-        "unit": "triangle"
-      },
-      {
         "type": "clash",
         "place": "jieting"
+      },
+      {
+        "type": "arrow",
+        "route": "jieting_guanzhong",
+        "side": "wei",
+        "unit": "triangle",
+        "retreat": true
       }
     ],
     "battle": "jieting228",
@@ -352,6 +353,11 @@ window.TK.timeline = [
         "side": "wei",
         "unit": "square",
         "retreat": true
+      },
+      {
+        "type": "pin",
+        "place": "chencang",
+        "label": "กุยห้วยตั้งรับ"
       }
     ],
     "hud": {
