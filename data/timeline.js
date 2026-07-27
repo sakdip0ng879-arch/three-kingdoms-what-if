@@ -478,6 +478,13 @@ window.TK.timeline = [
         "route": "chencang_mei",
         "side": "han",
         "unit": "triangle"
+      },
+      {
+        "type": "arrow",
+        "route": "mei_changan",
+        "side": "wei",
+        "unit": "square",
+        "reverse": true
       }
     ],
     "fact": "fiction",
@@ -505,15 +512,15 @@ window.TK.timeline = [
         "unit": "square"
       },
       {
-        "type": "clash",
-        "place": "mei"
-      },
-      {
         "type": "arrow",
         "route": "mei_changan",
         "side": "wei",
         "unit": "triangle",
-        "retreat": true
+        "reverse": true
+      },
+      {
+        "type": "clash",
+        "place": "mei"
       }
     ],
     "battle": "mei229",
@@ -529,9 +536,9 @@ window.TK.timeline = [
     "text": "เตียงอานไม่ต้องตี เซี่ยโหวเม่า — ราชบุตรเขยที่อุยเอี๋ยนเคยหัวเราะเยาะว่าเป็นลูกคนรวยขี้ขลาดไม่มีแผนการ — ขนทรัพย์สมบัติขึ้นเกวียนหนีออกประตูตะวันออกก่อนทัพฮั่นจะเห็นกำแพงเมืองด้วยซ้ำ ตระกูลใหญ่แห่งกวนจงที่อยู่มาตั้งแต่สมัยราชวงศ์ฮั่นตะวันตก คำนวณเสร็จในสามวันแล้วเปิดประตูเมืองต้อนรับ “ทัพหลวงแห่งราชวงศ์ฮั่น” นครหลวงเก่าสี่ร้อยปีกลับคืนสู่ธงฮั่นโดยแทบไม่เสียเลือด",
     "camera": [
       400,
-      540,
-      420,
-      340
+      520,
+      500,
+      400
     ],
     "mapDelta": {
       "guanzhong": "han"
@@ -545,7 +552,14 @@ window.TK.timeline = [
       },
       {
         "type": "arrow",
-        "route": "changan_tongguan",
+        "route": "mei_flee_east",
+        "side": "wei",
+        "unit": "triangle",
+        "retreat": true
+      },
+      {
+        "type": "arrow",
+        "route": "changan_flee_east",
         "side": "wei",
         "unit": "square",
         "retreat": true
@@ -1226,14 +1240,6 @@ window.TK.timeline = [
         "type": "pin",
         "place": "wuguan",
         "label": "อองเป๋งปิดช่องเขา"
-      },
-      {
-        "type": "arrow",
-        "route": "wancheng_wuguan",
-        "side": "wei",
-        "unit": "square",
-        "reverse": true,
-        "retreat": true
       }
     ],
     "battle": "wuguan244",
@@ -1998,9 +2004,10 @@ window.TK.timeline = [
       },
       {
         "type": "arrow",
-        "route": "ruxu_jianye",
+        "route": "ruxu_shouchun",
         "side": "han",
-        "unit": "square"
+        "unit": "square",
+        "reverse": true
       },
       {
         "type": "arrow",
@@ -2026,6 +2033,9 @@ window.TK.timeline = [
       1270,
       520
     ],
+    "mapDelta": {
+      "jingzhou_s": "han"
+    },
     "markers": [
       {
         "type": "arrow",
@@ -2034,11 +2044,11 @@ window.TK.timeline = [
         "unit": "hex"
       },
       {
-        "type": "clash",
-        "place": "xiling"
+        "type": "pin",
+        "place": "xiling",
+        "label": "โซ่เหล็กขาด ช่องแคบเปิด"
       }
     ],
-    "battle": "conquestwu276",
     "fact": "mixed",
     "factNote": "กลเก็บหลักเหล็กด้วยแพหุ่นฟางและกลเผาโซ่เหล็กด้วยคบเพลิงน้ำมันงาเป็นของจริงทุกรายละเอียด รวมถึงการที่ป้อมริมน้ำยอมเปิดประตูโดยไม่สู้ ที่แต่งคือธงฮั่นและปี 276 — ของจริงคือทัพจิ้นปี 280"
   },
@@ -2055,9 +2065,6 @@ window.TK.timeline = [
       340,
       300
     ],
-    "mapDelta": {
-      "jingzhou_s": "han"
-    },
     "markers": [
       {
         "type": "arrow",
@@ -2111,7 +2118,6 @@ window.TK.timeline = [
         "label": "ซุนโฮยอมจำนน"
       }
     ],
-    "battle": "conquestwu276",
     "fact": "mixed",
     "factNote": "พิธียอมจำนนแบบเปลื้องเสื้อ มัดมือไพล่หลัง และให้คนแบกโลงศพตามหลัง เป็นสิ่งที่ซุนโฮทำจริง ที่แต่งคือปีและผู้รับ — ของจริงคือปี 280 ต่อหน้าทัพราชวงศ์จิ้น"
   },
