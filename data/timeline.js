@@ -240,6 +240,9 @@ window.TK.timeline = [
       420,
       380
     ],
+    "mapDelta": {
+      "longyou": "han"
+    },
     "markers": [
       {
         "type": "pin",
@@ -337,9 +340,6 @@ window.TK.timeline = [
       420,
       380
     ],
-    "mapDelta": {
-      "longyou": "han"
-    },
     "markers": [
       {
         "type": "arrow",
@@ -1363,6 +1363,12 @@ window.TK.timeline = [
         "route": "luoyang_xuchang",
         "side": "wei",
         "unit": "square"
+      },
+      {
+        "type": "arrow",
+        "route": "xuchang_shouchun",
+        "side": "wei",
+        "unit": "square"
       }
     ],
     "fact": "real",
@@ -1426,7 +1432,16 @@ window.TK.timeline = [
       500,
       400
     ],
+    "mapDelta": {
+      "huainan_n": "none"
+    },
     "markers": [
+      {
+        "type": "arrow",
+        "route": "xuchang_shouchun",
+        "side": "wei",
+        "unit": "square"
+      },
       {
         "type": "clash",
         "place": "shouchun"
@@ -1452,6 +1467,9 @@ window.TK.timeline = [
       400,
       300
     ],
+    "mapDelta": {
+      "huainan_n": "wei"
+    },
     "markers": [
       {
         "type": "arrow",
@@ -1917,6 +1935,9 @@ window.TK.timeline = [
       420,
       300
     ],
+    "mapDelta": {
+      "xiling": "han"
+    },
     "markers": [
       {
         "type": "arrow",
@@ -1952,6 +1973,9 @@ window.TK.timeline = [
       340,
       300
     ],
+    "mapDelta": {
+      "xiling": "wu"
+    },
     "markers": [
       {
         "type": "pin",
@@ -2052,7 +2076,8 @@ window.TK.timeline = [
       520
     ],
     "mapDelta": {
-      "jingzhou_s": "han"
+      "jingzhou_s": "han",
+      "xiling": "han"
     },
     "markers": [
       {
