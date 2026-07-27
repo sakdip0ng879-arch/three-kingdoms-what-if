@@ -1633,7 +1633,9 @@ window.TK.timeline = [
         "type": "arrow",
         "route": "ruxu_shouchun",
         "side": "wu",
-        "unit": "hex"
+        "unit": "hex",
+        "reverse": true,
+        "retreat": true
       }
     ],
     "fact": "mixed",
@@ -1675,6 +1677,9 @@ window.TK.timeline = [
       340,
       300
     ],
+    "mapDelta": {
+      "hanei": "han"
+    },
     "markers": [
       {
         "type": "pin",
