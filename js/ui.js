@@ -205,7 +205,12 @@ TK.ui = (function(){
   }
 
   function buildHud(){
-    $('#hud').replaceChildren(...['han','wei','wu'].map(k => {
+    /* หัวข้อบอกว่าหลอดวัดอะไร — เดิมไม่มี คนอ่านจึงเดาไม่ออกว่าเทียบกับอะไร */
+    const head = document.createElement('div');
+    head.className = 'hhead';
+    head.textContent = 'สัดส่วนกำลังพลของสามฝ่าย';
+
+    $('#hud').replaceChildren(head, ...['han','wei','wu'].map(k => {
       const f = TK.factions[k];
       const row = document.createElement('div');
       row.className = 'hrow';
@@ -293,9 +298,13 @@ TK.ui = (function(){
     /* ทั้งสามตัวเลขมาจากพื้นที่ที่ถืออยู่จริงเหมือนกันหมด — เสียดินแดนเมื่อไหร่ลดพร้อมกัน
        เดิมจำนวนเขตคำนวณสด แต่ประชากรกับทหารอ่านค่าที่ประกาศไว้เพียง 7 ฉากจาก 71
        บรรทัดเดียวจึงมีตัวเลขเรียลไทม์ปนกับตัวเลขแช่แข็ง */
-    const s = ev.strength, t = ev.tally, total = t.han + t.wei + t.wu + t.none;
+    /* ⚠ หลอดต้องวัด "กำลังพล" ให้ตรงกับหัวข้อที่เขียนไว้
+       เดิมหลอดวัดสัดส่วนจำนวนเขต แต่ตัวเลขข้างหลอดเป็นทหาร คนละอย่างกัน
+       จึงเกิดภาพที่วุ่ยมีทหารน้อยที่สุดแต่หลอดยาวที่สุดเพราะยังถือเขตเยอะ */
+    const s = ev.strength, t = ev.tally;
+    const army = ['han','wei','wu'].reduce((a,k) => a + (s ? s[k].troops : 0), 0);
     ['han','wei','wu'].forEach(k => {
-      const pct = total ? (t[k] / total * 100) : 0;
+      const pct = army ? (s[k].troops / army * 100) : 0;
       document.querySelector(`[data-bar="${k}"]`).style.width = pct.toFixed(1) + '%';
       document.querySelector(`[data-num="${k}"]`).textContent =
         `${t[k]} เขต` + (s && s[k] && t[k]

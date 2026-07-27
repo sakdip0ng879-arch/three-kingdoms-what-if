@@ -42,17 +42,44 @@ TK.engine = (function(){
 
      losses = กำลังพลที่เสียถาวรจากการรบ หน่วยเป็นหมื่น สะสมไปเรื่อย ๆ
      จำเป็นเพราะบางศึกเสียคนโดยไม่เสียแผ่นดิน (สือถิง อู่กวน) ซึ่งพื้นที่อย่างเดียวจับไม่ได้ */
+  /* ฐานกำลังพลของแต่ละฝ่ายตอนเปิดเรื่อง — ใช้วัดว่าตอนนี้ถูกบีบไปแค่ไหน
+     คิดครั้งเดียวตอนโหลด ไม่ต้องคิดใหม่ทุกฉาก */
+  const BASE228 = (() => {
+    const b = { han:0, wei:0, wu:0 };
+    for (const id in TK.regions){
+      const r = TK.regions[id];
+      if (b[r.owner] !== undefined && r.troops !== undefined) b[r.owner] += r.troops;
+    }
+    return b;
+  })();
+
+  /* กองทัพที่เสียไปไม่ได้หายถาวร — รัฐเกณฑ์คนมาทดแทนได้ในไม่กี่ปี
+     0.68 ต่อปี = ผ่านไปสามปีเหลือผลราวหนึ่งในสาม ห้าปีแทบหมด */
+  const RECOVER = 0.68;
+  /* ถูกบีบมากก็เกณฑ์หนักขึ้น — เสียแผ่นดินไปครึ่งหนึ่งจะรีดกำลังจากที่เหลือได้อีกราวหนึ่งในสี่
+     ที่ปี 228 ทุกฝ่ายยังถือแผ่นดินตัวเองครบ ค่านี้จึงเป็น 1.0 พอดี ตัวเลขเปิดเรื่องไม่เพี้ยน */
+  const DESPERATION = 0.5;
+
   function strength(n){
     const o = ownersAt(n);
     const s = { han:{pop:0,troops:0}, wei:{pop:0,troops:0}, wu:{pop:0,troops:0} };
     for (const id in o){
       const side = s[o[id]], r = TK.regions[id];
       if (!side || !r || r.pop === undefined) continue;
-      side.pop += r.pop; side.troops += r.troops;
+      side.pop += r.pop; side.troops += r.troops;   /* troops ตรงนี้คือ "แผ่นดินนี้เลี้ยงทหารได้เท่าไร" */
     }
+
+    const year = beats[Math.min(n, beats.length-1)].year;
+    for (const k in s){
+      /* เกณฑ์หนักขึ้นตามสัดส่วนแผ่นดินเดิมที่เสียไป */
+      const share = BASE228[k] ? s[k].troops / BASE228[k] : 1;
+      s[k].troops *= 1 + DESPERATION * Math.max(0, 1 - share);
+    }
+    /* หักส่วนที่เพิ่งเสียไปและยังเกณฑ์คืนไม่ทัน */
     for (let k = 0; k <= n && k < beats.length; k++){
       const L = beats[k].losses; if (!L) continue;
-      for (const side in L) if (s[side]) s[side].troops -= L[side];
+      const age = Math.max(0, year - beats[k].year);
+      for (const side in L) if (s[side]) s[side].troops -= L[side] * Math.pow(RECOVER, age);
     }
     for (const k in s){
       s[k].pop    = Math.round(s[k].pop * 10) / 10;

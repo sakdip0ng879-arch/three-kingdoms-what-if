@@ -149,6 +149,9 @@ body{
   background:rgba(14,16,21,.82); backdrop-filter:blur(9px);
   border:1px solid var(--line); border-radius:10px; padding:11px 13px;
   display:flex; flex-direction:column; gap:7px}
+/* หัวข้อบอกว่าหลอดวัดอะไร — ถ้าไม่บอก คนอ่านเดาไม่ออกว่าเทียบกับอะไร */
+.hhead{font-size:10px; color:var(--dim); letter-spacing:.4px;
+  padding-bottom:2px; border-bottom:1px solid var(--line); margin-bottom:1px}
 .hrow{display:flex; flex-direction:column; gap:4px; font-size:11.5px}
 .htop{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
 .hname{font-weight:700; color:var(--text); display:flex; align-items:center; gap:6px}
