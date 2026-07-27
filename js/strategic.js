@@ -150,6 +150,37 @@ TK.map = (function(){
     return null;
   }
 
+  /* ปลายทางของเส้นทางเดินทัพ — คือที่ที่ฉากกำลังจะไป ไม่ใช่ที่ที่ออกเดิน */
+  function routeEnd(name, reverse){
+    const rt = TK.routes[name]; if (!rt) return null;
+    const n = rt.d.match(/-?[\d.]+/g).map(Number);
+    return reverse ? [n[0], n[1]] : [n[n.length-2], n[n.length-1]];
+  }
+
+  /* ⚠ เลือกเขตจาก "สิ่งที่ฉากพูดถึง" ไม่ใช่จากจุดกึ่งกลางกล้อง
+     กล้องถูกจัดให้เห็นการเคลื่อนไหวทั้งหมด จุดกึ่งกลางของมันจึงตกในเขตข้างเคียงได้บ่อย
+     วัดแล้วมี 13 ฉากที่กรอบไปล้อมเขตที่ไม่มีหมุดหรือลูกศรของฉากอยู่เลยสักอัน
+     เช่นฉากถอดโจฮองที่พูดถึงลกเอี๋ยง แต่กรอบไปล้อมกุนจิ๋ว */
+  function focusRegion(b){
+    if (!b) return null;
+    /* ถ่วงน้ำหนัก: จุดปะทะบอกที่ตั้งของฉากหนักแน่นกว่าหมุด และหมุดหนักแน่นกว่าปลายลูกศร
+       ถ้าให้เท่ากันหมด ฉากที่มีหมุดหนึ่งกับลูกศรหนึ่งจะเสมอกันแล้วไม่ได้กรอบเลย
+       ทั้งที่หมุดคือสิ่งที่ฉากชี้ให้ดูอยู่แล้ว */
+    const votes = {};
+    const add = (p, w) => { if (!p) return; const id = regionAt(p[0], p[1]);
+                            if (id) votes[id] = (votes[id] || 0) + w; };
+    for (const m of (b.markers || [])){
+      if (m.place && TK.places[m.place])
+        add([TK.places[m.place].x, TK.places[m.place].y], m.type === 'clash' ? 3 : 2);
+      if (m.route) add(routeEnd(m.route, m.reverse), 1);
+    }
+    const rank = Object.entries(votes).sort((a, b2) => b2[1] - a[1]);
+    if (!rank.length) return null;
+    /* คะแนนเท่ากันหลายเขต = ฉากคร่อมหลายเขต ตีกรอบไปก็ชี้ผิด ไม่ตีดีกว่า */
+    if (rank.length > 1 && rank[0][1] === rank[1][1]) return null;
+    return rank[0][0];
+  }
+
   function updateWhere(){
     const box = document.getElementById('where');
     if (!box) return;
@@ -159,9 +190,7 @@ TK.map = (function(){
        จะทำให้กรอบที่ตั้งใจซูม 340 บานเป็น 1535 แล้วถูกตัดสินว่า "ทั้งแผ่นดิน" ผิด ๆ */
     const cam  = focusBeat && focusBeat.camera;
     const wide = !cam || cam[2] > W * 0.72;
-    const cx   = cam ? cam[0] + cam[2]/2 : W/2;
-    const cy   = cam ? cam[1] + (cam[3] || cam[2]) / 2 : H/2;
-    const rid  = wide ? null : regionAt(cx, cy);
+    const rid  = wide ? null : focusRegion(focusBeat);
 
     /* สถานที่ที่ฉากนี้พูดถึง เอามาจาก marker ตรง ๆ */
     const spots = [...new Set((focusBeat && focusBeat.markers || [])
@@ -180,8 +209,11 @@ TK.map = (function(){
     /* ตีกรอบเขตที่กำลังดู ให้ตารู้ทันทีว่าต้องมองตรงไหน */
     layers.focus.replaceChildren();
     if (rid){
-      const o = mk('path',{d:TK.regions[rid].d, class:'region-focus'});
-      layers.focus.append(o);
+      /* ⚠ ต้องใช้ fill ซึ่งเป็นรูปที่ถูกระบายจริง ไม่ใช่ d ซึ่งเป็นโพลิกอนเมล็ดที่ลากด้วยมือ
+         ตั้งแต่มี geo_fill ทั้งสองรูปไม่ตรงกันแล้ว กรอบจึงลอยอยู่คนละที่กับสี
+         — นี่คือ "วงกลมแปลก ๆ" ที่เห็นชัดขึ้นเรื่อย ๆ ในครึ่งหลังของเรื่อง */
+      const r = TK.regions[rid];
+      layers.focus.append(mk('path',{d:r.fill || r.d, class:'region-focus'}));
     }
   }
 
