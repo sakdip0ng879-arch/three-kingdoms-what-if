@@ -81,7 +81,9 @@ TK.timeline.forEach((b, n) => {
     if (sides.length && sides.every(s => s === holder))
       bad.push([b, `ปะทะที่ ${p.th} ซึ่งอยู่ใน "${REG[rid].th}" ของ${TH(holder)}อยู่แล้ว ` +
                    `แต่ลูกศรที่เข้าฉากมีแต่ของ${TH(holder)} → อ่านว่าบุกตีตัวเอง`]);
-    else if (sides.length > 1 && !sides.includes(holder))
+    /* holder === 'none' คือแผ่นดินที่ไม่มีเจ้าของ (กบฏ/แยกตัว) — ใครมาชนกันตรงนั้นก็ถูกทั้งนั้น
+       เช่นโซ่วชุนตอนจูกัดตั้นยกธง วุ่ยมาล้อม ง่อมาหนุน ไม่มีฝ่ายไหนเป็นเจ้าของ */
+    else if (sides.length > 1 && holder !== 'none' && !sides.includes(holder))
       bad.push([b, `ปะทะที่ ${p.th} อยู่ใน "${REG[rid].th}" ของ${TH(holder)} ` +
                    `ซึ่งไม่ใช่คู่กรณี (${sides.map(TH).join(' vs ')})`]);
   }
