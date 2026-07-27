@@ -1541,11 +1541,20 @@ window.TK.timeline = [
       500,
       400
     ],
+    "mapDelta": {
+      "huainan_n": "none"
+    },
     "markers": [
       {
         "type": "pin",
         "place": "hulao",
         "label": "แนวรับใหม่ ฮูโลก-ฮูโต๋"
+      },
+      {
+        "type": "arrow",
+        "route": "xuchang_shouchun",
+        "side": "wei",
+        "unit": "square"
       },
       {
         "type": "arrow",
@@ -1611,10 +1620,14 @@ window.TK.timeline = [
       500,
       400
     ],
+    "mapDelta": {
+      "huainan_n": "wei"
+    },
     "markers": [
       {
-        "type": "clash",
-        "place": "shouchun"
+        "type": "pin",
+        "place": "shouchun",
+        "label": "จูกัดตั้นตายในที่รบ"
       },
       {
         "type": "arrow",
