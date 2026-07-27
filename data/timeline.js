@@ -507,6 +507,13 @@ window.TK.timeline = [
       {
         "type": "clash",
         "place": "mei"
+      },
+      {
+        "type": "arrow",
+        "route": "mei_changan",
+        "side": "wei",
+        "unit": "triangle",
+        "retreat": true
       }
     ],
     "battle": "mei229",
@@ -535,6 +542,13 @@ window.TK.timeline = [
         "route": "mei_changan",
         "side": "han",
         "unit": "triangle"
+      },
+      {
+        "type": "arrow",
+        "route": "changan_tongguan",
+        "side": "wei",
+        "unit": "square",
+        "retreat": true
       },
       {
         "type": "pin",
@@ -756,9 +770,25 @@ window.TK.timeline = [
     ],
     "markers": [
       {
+        "type": "arrow",
+        "route": "puban_cross_south",
+        "side": "wei",
+        "unit": "triangle",
+        "reverse": true,
+        "retreat": true
+      },
+      {
         "type": "pin",
         "place": "tongguan",
         "label": "อุยเอี๋ยนยืนยิ้มอยู่ข้างบน"
+      },
+      {
+        "type": "arrow",
+        "route": "luoyang_tongguan",
+        "side": "wei",
+        "unit": "square",
+        "reverse": true,
+        "retreat": true
       }
     ],
     "fact": "mixed",
@@ -784,9 +814,10 @@ window.TK.timeline = [
       },
       {
         "type": "arrow",
-        "route": "luoyang_xuchang",
+        "route": "luoyang_yecheng",
         "side": "wei",
-        "unit": "square"
+        "unit": "square",
+        "retreat": true
       },
       {
         "type": "pin",
@@ -1192,8 +1223,17 @@ window.TK.timeline = [
         "unit": "square"
       },
       {
-        "type": "clash",
-        "place": "wuguan"
+        "type": "pin",
+        "place": "wuguan",
+        "label": "อองเป๋งปิดช่องเขา"
+      },
+      {
+        "type": "arrow",
+        "route": "wancheng_wuguan",
+        "side": "wei",
+        "unit": "square",
+        "reverse": true,
+        "retreat": true
       }
     ],
     "battle": "wuguan244",
@@ -1643,8 +1683,21 @@ window.TK.timeline = [
     },
     "markers": [
       {
+        "type": "arrow",
+        "route": "luoyang_xuchang",
+        "side": "han",
+        "unit": "square"
+      },
+      {
         "type": "clash",
         "place": "xuchang"
+      },
+      {
+        "type": "arrow",
+        "route": "xuchang_yecheng",
+        "side": "wei",
+        "unit": "square",
+        "retreat": true
       },
       {
         "type": "pin",

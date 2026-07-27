@@ -274,7 +274,9 @@ window.TK._part1 = [
     camera:[400,540,420,340],
     markers:[
       {type:"arrow", route:"chencang_mei", side:"han", unit:"square"},
-      {type:"clash", place:"mei"}
+      {type:"clash", place:"mei"},
+      /* "เมื่อโจจิ๋นสั่งถอย เตียวคับอาสาคุมหลัง" — เนื้อเรื่องบอกว่าถอย แผนที่ก็ต้องเห็นว่าถอย */
+      {type:"arrow", route:"mei_changan", side:"wei", unit:"triangle", retreat:true}
     ],
     battle:"mei229",
     fact:"mixed",
@@ -294,6 +296,9 @@ window.TK._part1 = [
     mapDelta:{ guanzhong:"han" },
     markers:[
       {type:"arrow", route:"mei_changan", side:"han", unit:"triangle"},
+      /* "ขนทรัพย์สมบัติขึ้นเกวียนหนีออกประตูตะวันออก" — เซี่ยโหวเม่าทิ้งเมืองก่อนทัพฮั่นจะถึง
+         ต้องเห็นเขาออกไปทางตะวันออก ไม่ใช่แค่เห็นฮั่นเดินเข้ามาแล้วเมืองเปลี่ยนสีเฉย ๆ */
+      {type:"arrow", route:"changan_tongguan", side:"wei", unit:"square", retreat:true},
       {type:"pin",   place:"changan",     label:"นครหลวงเก่ากลับสู่ธงฮั่น"}
     ],
     hud:{ han:{pop:1.4,troops:13}, wei:{pop:4.2,troops:37}, wu:{pop:2.3,troops:20} },

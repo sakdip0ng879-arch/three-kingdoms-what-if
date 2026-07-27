@@ -59,7 +59,13 @@ window.TK._part2 = [
          "เขากราบทูลโจยอยว่ากวนจงเป็นแผลที่ตัดไม่ได้แล้ว ทำได้แค่ไม่ให้มันลาม",
     camera:[620,520,300,260],
     markers:[
-      {type:"pin", place:"tongguan", label:"อุยเอี๋ยนยืนยิ้มอยู่ข้างบน"}
+      /* ฉากนี้เคยไม่มีลูกศรเลยสักเส้น ทั้งที่เนื้อเรื่องคือการถอยทัพล้วน ๆ
+         เรียงตามที่เรื่องเล่า: สุมาอี้ถอยก่อน โจจิ๋นฝืนต่ออีกเดือนแล้วถอยตาม */
+      {type:"arrow", route:"puban_cross_south", side:"wei", unit:"triangle",
+       reverse:true, retreat:true},
+      {type:"pin", place:"tongguan", label:"อุยเอี๋ยนยืนยิ้มอยู่ข้างบน"},
+      {type:"arrow", route:"luoyang_tongguan", side:"wei", unit:"square",
+       reverse:true, retreat:true}
     ],
     fact:"mixed",
     factNote:"โจจิ๋นล้มป่วยหลังถอยทัพและสิ้นชีวิตในปี 231 จริง ตรงตามอายุขัยของตัวเอง " +
@@ -75,7 +81,9 @@ window.TK._part2 = [
     camera:[740,440,340,380],
     markers:[
       {type:"pin",   place:"luoyang", label:"เมืองป้อมหน้าด่าน"},
-      {type:"arrow", route:"luoyang_xuchang", side:"wei", unit:"square"},
+      /* เดิมใช้ luoyang_xuchang ซึ่งชี้ไปฮูโต๋ทางตะวันออกเฉียงใต้ สวนทางกับเนื้อเรื่อง
+         ที่บอกว่าคลังหลวงกับเชื้อพระวงศ์ "ย้ายไปเงียบกุ๋นทางเหนือ" — และเป็นการถอย ไม่ใช่การเดินทัพ */
+      {type:"arrow", route:"luoyang_yecheng", side:"wei", unit:"square", retreat:true},
       {type:"pin",   place:"yecheng", label:"คลังหลวงย้ายขึ้นเหนือ"}
     ],
     fact:"fiction",
@@ -326,7 +334,12 @@ window.TK._part2 = [
     camera:[600,580,400,300],
     markers:[
       {type:"arrow", route:"wancheng_wuguan", side:"wei", unit:"square"},
-      {type:"clash", place:"wuguan"}
+      /* ไม่ใช่ clash — เนื้อเรื่องบอกว่า "ถอยกลับแบบสิ้นเนื้อประดาตัวโดยไม่ได้รบสักครั้ง"
+         และหัวไฟล์ wuguan244.js ก็เขียนล็อกไว้ว่าศึกนี้ไม่มี act clash แม้แต่อันเดียว ห้ามเติม
+         วงปะทะที่เคยปักไว้ตรงนี้จึงขัดกับทั้งเนื้อเรื่องและกฎของศึกตัวเอง */
+      {type:"pin",   place:"wuguan", label:"อองเป๋งปิดช่องเขา"},
+      {type:"arrow", route:"wancheng_wuguan", side:"wei", unit:"square",
+       reverse:true, retreat:true}
     ],
     battle:"wuguan244",
     fact:"mixed",
@@ -614,7 +627,11 @@ window.TK._part2 = [
     camera:[900,400,340,340],
     mapDelta:{ yuzhou:"han" },
     markers:[
+      /* ฉากนี้เคยมีแต่วงปะทะกับหมุด ไม่มีลูกศรเลย ทั้งที่เนื้อเรื่องเล่าการเคลื่อนทัพสองครั้ง:
+         ฮั่นกดจากลกเอี๋ยงมาฮูโต๋ แล้วสุมาเจียวถอยขึ้นเหนือไปเงียบกุ๋น */
+      {type:"arrow", route:"luoyang_xuchang", side:"han", unit:"square"},
       {type:"clash", place:"xuchang"},
+      {type:"arrow", route:"xuchang_yecheng", side:"wei", unit:"square", retreat:true},
       {type:"pin",   place:"yecheng", label:"สุมาเจียวถอยไปตั้งหลัก"}
     ],
     fact:"mixed",
