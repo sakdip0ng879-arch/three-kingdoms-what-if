@@ -290,12 +290,16 @@ TK.ui = (function(){
     const cur = document.querySelector('.tcell.now');
     if (cur) cur.scrollIntoView({block:'nearest', inline:'nearest'});
 
-    const hud = ev.hud, t = ev.tally, total = t.han + t.wei + t.wu + t.none;
+    /* ทั้งสามตัวเลขมาจากพื้นที่ที่ถืออยู่จริงเหมือนกันหมด — เสียดินแดนเมื่อไหร่ลดพร้อมกัน
+       เดิมจำนวนเขตคำนวณสด แต่ประชากรกับทหารอ่านค่าที่ประกาศไว้เพียง 7 ฉากจาก 71
+       บรรทัดเดียวจึงมีตัวเลขเรียลไทม์ปนกับตัวเลขแช่แข็ง */
+    const s = ev.strength, t = ev.tally, total = t.han + t.wei + t.wu + t.none;
     ['han','wei','wu'].forEach(k => {
       const pct = total ? (t[k] / total * 100) : 0;
       document.querySelector(`[data-bar="${k}"]`).style.width = pct.toFixed(1) + '%';
       document.querySelector(`[data-num="${k}"]`).textContent =
-        `${t[k]} เขต` + (hud && hud[k] ? ` · ${hud[k].pop} ล้าน · ${hud[k].troops} หมื่น` : '');
+        `${t[k]} เขต` + (s && s[k] && t[k]
+          ? ` · ${s[k].pop} ล้าน · ${s[k].troops} หมื่น` : '');
     });
 
     const scrub = ev.how === 'scrub';

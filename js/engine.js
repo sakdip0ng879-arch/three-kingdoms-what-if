@@ -26,19 +26,39 @@ TK.engine = (function(){
     return o;
   }
 
-  /* field ที่ "ค้างไว้จนกว่าจะมีค่าใหม่" — เอาค่าล่าสุดที่เจอย้อนหลัง */
-  function latest(n, field){
-    for (let k = Math.min(n, beats.length-1); k >= 0; k--){
-      if (beats[k][field]) return beats[k][field];
-    }
-    return null;
-  }
-
   function tally(n){
     const o = ownersAt(n);
     const c = { han:0, wei:0, wu:0, none:0 };
     for (const id in o) c[o[id]] = (c[o[id]] || 0) + 1;
     return c;
+  }
+
+  /* ── ประชากรกับกำลังพล คำนวณจากพื้นที่ที่ถืออยู่จริง ──
+     เดิมอ่านจากช่อง hud ที่ประกาศไว้แค่ 7 ฉากจาก 71 ตัวเลขจึงแช่แข็งยาวสุด 22 ฉาก
+     ทั้งที่ "จำนวนเขต" ข้างกันคำนวณสดอยู่แล้ว — บรรทัดเดียวเลยขัดกันเอง
+
+     เขตที่เป็น none (กบฏ/แยกตัว) ไม่นับให้ใคร ซึ่งถูกแล้ว เพราะระหว่างกบฏ
+     เจ้าของเดิมเก็บภาษีและเกณฑ์คนจากที่นั่นไม่ได้
+
+     losses = กำลังพลที่เสียถาวรจากการรบ หน่วยเป็นหมื่น สะสมไปเรื่อย ๆ
+     จำเป็นเพราะบางศึกเสียคนโดยไม่เสียแผ่นดิน (สือถิง อู่กวน) ซึ่งพื้นที่อย่างเดียวจับไม่ได้ */
+  function strength(n){
+    const o = ownersAt(n);
+    const s = { han:{pop:0,troops:0}, wei:{pop:0,troops:0}, wu:{pop:0,troops:0} };
+    for (const id in o){
+      const side = s[o[id]], r = TK.regions[id];
+      if (!side || !r || r.pop === undefined) continue;
+      side.pop += r.pop; side.troops += r.troops;
+    }
+    for (let k = 0; k <= n && k < beats.length; k++){
+      const L = beats[k].losses; if (!L) continue;
+      for (const side in L) if (s[side]) s[side].troops -= L[side];
+    }
+    for (const k in s){
+      s[k].pop    = Math.round(s[k].pop * 10) / 10;
+      s[k].troops = Math.max(0, Math.round(s[k].troops));
+    }
+    return s;
   }
 
   /* ── นำทาง ── */
@@ -48,7 +68,7 @@ TK.engine = (function(){
     const from = i;
     i = n;
     emit('beat', { index:i, beat:beats[i], from, how: how || 'jump',
-                   owners: ownersAt(i), hud: latest(i,'hud'), tally: tally(i) });
+                   owners: ownersAt(i), tally: tally(i), strength: strength(i) });
   }
   const next = () => { if (i < beats.length - 1) goTo(i + 1, 'next'); };
   const prev = () => { if (i > 0) goTo(i - 1, 'prev'); };
@@ -89,6 +109,6 @@ TK.engine = (function(){
     get index(){ return i; },
     get beat(){ return beats[i]; },
     get length(){ return beats.length; },
-    ownersAt, latest, tally, goTo, next, prev, on, emit, tween, ease
+    ownersAt, tally, strength, goTo, next, prev, on, emit, tween, ease
   };
 })();

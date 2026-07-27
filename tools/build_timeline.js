@@ -77,6 +77,17 @@ for (const b of beats){
   if (b.camera && (!Array.isArray(b.camera) || b.camera.length < 3))
     err.push(`${at}: camera ต้องเป็น [x,y,w,h]`);
 
+  /* losses = กำลังพลที่เสียถาวรจากการรบ หน่วยหมื่นนาย เขียนได้เฉพาะสามฝ่ายและต้องเป็นบวก
+     ถ้าพิมพ์ชื่อฝ่ายผิด ตัวเลขจะหายเงียบ ๆ โดยไม่มีอะไรเตือน */
+  for (const k in (b.losses || {})){
+    if (!['han','wei','wu'].includes(k))
+      err.push(`${at}: losses มีฝ่ายที่ไม่รู้จัก "${k}" — ใช้ han|wei|wu`);
+    else if (typeof b.losses[k] !== 'number' || b.losses[k] <= 0)
+      err.push(`${at}: losses.${k} ต้องเป็นตัวเลขบวก (หน่วยหมื่นนาย) ไม่ใช่ ${b.losses[k]}`);
+  }
+  if (b.hud)
+    err.push(`${at}: ช่อง hud เลิกใช้แล้ว — ตัวเลขคำนวณจากพื้นที่ใน geo.js (ดู engine.strength)`);
+
   for (const k in (b.mapDelta || {})){
     if (!TK.regions[k]) err.push(`${at}: ไม่รู้จักเขต "${k}"`);
     /* none = แยกตัวเป็นอิสระ ไม่ได้ขึ้นกับสามก๊กสักฝ่าย (เช่นเลียวตั๋งของกงซุนยวนปี 238)
