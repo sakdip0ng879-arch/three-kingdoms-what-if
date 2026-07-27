@@ -29,6 +29,42 @@ const TK = global.window.TK;
 const BATTLES = ['jieting228','chencang229','mei229','twogates230',
                  'wuguan244','eastern255','xiling272','conquestwu276'];
 
+/* ── กำลังพลที่เสียในโหมดสมรภูมิ — คิดจากไฟล์ศึกโดยตรง ──
+   เดิม losses ของฉากที่มีสมรภูมิถูกตั้งด้วยมือ แล้ววัดออกมาว่าห่างจากของจริงมาก:
+   อู่กวนเสีย 9.5 หมื่นแต่บันทึก 2 · ศึกสองประตูเสีย 8.4 แต่บันทึก 0.5
+   คนอ่านกดเข้าไปเห็นทัพละลายคาตา แล้วออกมาหลอดแทบไม่ขยับ
+
+   กติกา: ฉากที่มี battle ห้ามเขียน losses เอง ให้คิดจากไฟล์ศึก
+          ฉากที่ไม่มี battle (เล่าด้วยคำบรรยายล้วน) เขียน losses เองได้
+
+   ขบวนเสบียงไม่นับเป็นกำลังพล — เป็นเกวียนกับวัวต่าง ไม่ใช่ทหาร */
+for (const id of BATTLES) {
+  const f = path.join(ROOT, 'data', 'battles', id + '.js');
+  if (fs.existsSync(f)) require(f);
+}
+function battleLosses(id){
+  const B = (TK.battles || {})[id];
+  if (!B) return null;
+  const defs = {};
+  for (const u of (B.units || []))    defs[u.id] = { ...u, final:u.strength };
+  for (const u of (B.reserves || [])) defs[u.id] = { ...u, final:u.strength };
+  for (const ph of B.phases)
+    for (const a of ph.acts){
+      const d = defs[a.u]; if (!d) continue;
+      if (a.shrink !== undefined) d.final = Math.round(d.strength * Math.max(0.18, a.shrink));
+      if (a.despawn) d.gone = true;               /* ถูกทำลาย/หมดสภาพ นับที่เหลือเป็นเสียด้วย */
+    }
+  const out = {};
+  for (const k in defs){
+    const d = defs[k];
+    if (d.shape === 'wagon') continue;            /* ขบวนเสบียง ไม่ใช่ทหาร */
+    const lost = d.strength - (d.gone ? 0 : d.final);
+    if (lost > 0) out[d.side] = (out[d.side] || 0) + lost / 10000;
+  }
+  for (const k in out) out[k] = Math.round(out[k] * 10) / 10;
+  return out;
+}
+
 /* แหล่งจริงของรายชื่อภาค — อยู่ที่นี่ ไม่ใช่ใน timeline.js เพราะไฟล์นั้นถูกสร้างทับทุกครั้ง */
 const CHAPTERS = [
   { n:0, th:"บทนำ — ผู้เฝ้ามอง",             years:"228"     },
@@ -85,6 +121,9 @@ for (const b of beats){
     else if (typeof b.losses[k] !== 'number' || b.losses[k] <= 0)
       err.push(`${at}: losses.${k} ต้องเป็นตัวเลขบวก (หน่วยหมื่นนาย) ไม่ใช่ ${b.losses[k]}`);
   }
+  /* ฉากที่มีสมรภูมิ ตัวเลขต้องมาจากไฟล์ศึก ไม่ใช่ตั้งมือให้มันเถียงกันเอง */
+  if (b.battle && b.losses)
+    err.push(`${at}: ฉากที่มี battle ห้ามเขียน losses เอง — คิดจาก data/battles/${b.battle}.js ให้อัตโนมัติ`);
   if (b.hud)
     err.push(`${at}: ช่อง hud เลิกใช้แล้ว — ตัวเลขคำนวณจากพื้นที่ใน geo.js (ดู engine.strength)`);
 
@@ -142,6 +181,14 @@ if (err.length){
   console.log(`\n✖ ผิด ${err.length} รายการ — ไม่เขียนไฟล์:`);
   err.forEach(e => console.log('  ' + e));
   process.exit(1);
+}
+
+/* ── ใส่ losses ที่คิดจากไฟล์ศึกลงในฉากที่มีสมรภูมิ ── */
+let fromBattle = 0;
+for (const b of beats){
+  if (!b.battle) continue;
+  const L = battleLosses(b.battle);
+  if (L && Object.keys(L).length){ b.losses = L; fromBattle++; }
 }
 
 /* ── เขียน ── */
