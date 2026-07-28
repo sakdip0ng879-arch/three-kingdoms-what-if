@@ -531,7 +531,7 @@ git checkout phase-2 -- js/ css/ index.html
 - `data/geo.js` — **22 ภูมิภาค** พร้อม polygon และเจ้าของ ณ ปี 228
 - `data/routes.js` — **25 เส้นทางเดินทัพ** ลากตามหุบเขา/แม่น้ำจริง (ใช้ Bezier ไม่ใช่เส้นตรง)
 - `tools/calibrate.html` — เครื่องมือตรวจ: สลับชั้นได้, ซูม/แพน, คลิกอ่านพิกัด, **ลากหมุดแก้ตำแหน่งแล้วกดส่งออก places.js ที่แก้แล้ว**, ค้นหาชื่อแล้วบินไปหา
-- `docs/phase1_calibration.png` — ภาพผลลัพธ์ไว้เทียบ
+- `docs/phase1_calibration.png` — ภาพผลลัพธ์ไว้เทียบ (เก็บในเครื่อง ไม่ track ขึ้น repo — ดู `.gitignore`)
 
 **การตรวจสอบ (ไม่ได้เชื่อสายตาอย่างเดียว)**
 เขียนสคริปต์ตรวจอัตโนมัติด้วย `SVGGeometryElement.isPointInFill()` — เช็กว่าสถานที่สำคัญ 44 แห่ง
@@ -559,7 +559,8 @@ git checkout phase-2 -- js/ css/ index.html
 - 13 จุดติดธง `chk:true` (วงแดงในภาพ) = พิกัดยังเป็นการประมาณ ลากแก้ได้ใน calibrate.html
 
 **ไฟล์ที่แตะ**
-`data/names.js` · `data/places.js` · `data/geo.js` · `data/routes.js` · `tools/calibrate.html` · `docs/phase1_calibration.png`
+`data/names.js` · `data/places.js` · `data/geo.js` · `data/routes.js` · `tools/calibrate.html`
+(`docs/phase1_calibration.png` อยู่ในเครื่องอย่างเดียว ไม่ track)
 
 **commit** — tag `phase-1` (data กับ tool แยก commit ตามวินัย)
 
