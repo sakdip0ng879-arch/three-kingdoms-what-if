@@ -140,7 +140,10 @@ for (const b of beats){
     if (!['pin','arrow','clash'].includes(m.type)) err.push(`${at}: marker ชนิด "${m.type}" ไม่มี`);
     if (m.place && !TK.places[m.place]) err.push(`${at}: ไม่รู้จักสถานที่ "${m.place}"`);
     if (m.route && !TK.routes[m.route]) err.push(`${at}: ไม่รู้จักเส้นทาง "${m.route}"`);
-    if (m.side  && !['han','wei','wu'].includes(m.side)) err.push(`${at}: side "${m.side}" ไม่ถูก`);
+    /* "none" ใช้ได้ด้วย — กองที่ไม่ใช่ของรัฐไหน เช่น เผ่าที่วุ่ยออกทุนให้ลงมาปล้นลุ่มน้ำจิง
+       ถ้าบังคับให้เป็น wei ภาพจะกลายเป็นทัพวุ่ยยกมา ซึ่งขัดกับทั้งเนื้อเรื่องและกฎแผ่นดินกบฏสีกลาง
+       TK.factions.none มีสีกำกับไว้อยู่แล้ว strategic.js จึงวาดได้ทันที */
+    if (m.side  && !['han','wei','wu','none'].includes(m.side)) err.push(`${at}: side "${m.side}" ไม่ถูก`);
   }
 
   if (b.battle && !BATTLES.includes(b.battle))
