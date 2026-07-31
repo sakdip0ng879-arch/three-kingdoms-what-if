@@ -1,7 +1,28 @@
 {
   "permissions": {
     "allow": [
-      "PowerShell(Add-Type -AssemblyName System.Drawing; $img = [System.Drawing.Image]::FromFile\\(\"C:\\\\Users\\\\sakdi\\\\OneDrive\\\\Desktop\\\\Three_Kingdoms_Project\\\\Map_of_Three_Kingdoms_\\(English\\).jpg\"\\); \"Width x Height: $\\($img.Width\\) x $\\($img.Height\\)\"; \"HorizontalRes: $\\($img.HorizontalResolution\\) VerticalRes: $\\($img.VerticalResolution\\)\"; \"PixelFormat: $\\($img.PixelFormat\\)\"; $img.Dispose\\(\\))"
+      "PowerShell(Add-Type -AssemblyName System.Drawing; $img = [System.Drawing.Image]::FromFile\\(\"C:\\\\Users\\\\sakdi\\\\OneDrive\\\\Desktop\\\\Three_Kingdoms_Project\\\\Map_of_Three_Kingdoms_\\(English\\).jpg\"\\); \"Width x Height: $\\($img.Width\\) x $\\($img.Height\\)\"; \"HorizontalRes: $\\($img.HorizontalResolution\\) VerticalRes: $\\($img.VerticalResolution\\)\"; \"PixelFormat: $\\($img.PixelFormat\\)\"; $img.Dispose\\(\\))",
+      "Bash(node -e \"global.window={};require\\('./data/places.js'\\);require\\('./data/geo.js'\\);require\\('./data/routes.js'\\);const T=global.window.TK;const want=['hanzhong','jieting','qishan','tianshui','nanan','anding','chencang','mei','changan','tongguan','wuguan','puban','xiaoguan','shiting','jianye','luoyang','longxi','qigu','chengdu','wuchang'];console.log\\('MISSING PLACES:',want.filter\\(p=>!T.places[p]\\)\\);console.log\\('REGIONS:',Object.keys\\(T.regions\\).join\\(' '\\)\\);\")",
+      "PowerShell(node -e \"global.window={};require\\('./data/places.js'\\);require\\('./data/geo.js'\\);require\\('./data/routes.js'\\);const T=global.window.TK;const want=['hanzhong','jieting','qishan','tianshui','nanan','anding','chencang','mei','changan','tongguan','wuguan','puban','xiaoguan','shiting','jianye','luoyang','longxi','qigu','chengdu','wuchang'];console.log\\('MISSING PLACES:',JSON.stringify\\(want.filter\\(p=>!T.places[p]\\)\\)\\);console.log\\('REGIONS:',Object.keys\\(T.regions\\).join\\(' '\\)\\);\")",
+      "PowerShell($paths = @\\(\"$env:ProgramFiles\\\\nodejs\\\\node.exe\", \"${env:ProgramFiles\\(x86\\)}\\\\nodejs\\\\node.exe\", \"$env:LOCALAPPDATA\\\\Programs\\\\nodejs\\\\node.exe\", \"$env:APPDATA\\\\npm\\\\node.exe\", \"$env:LOCALAPPDATA\\\\nvm\\\\node.exe\"\\); foreach \\($p in $paths\\) { if \\(Test-Path $p\\) { Write-Output \"FOUND: $p\" } }; Get-ChildItem -Path \"$env:LOCALAPPDATA\\\\Programs\",\"$env:ProgramFiles\" -Filter \"node.exe\" -Recurse -Depth 3 -ErrorAction SilentlyContinue | Select-Object -First 5 -ExpandProperty FullName)",
+      "PowerShell($c = @\\('node','nodejs','bun','deno','npm'\\); foreach \\($n in $c\\) { $g = Get-Command $n -ErrorAction SilentlyContinue; if \\($g\\) { Write-Output \"$n -> $\\($g.Source\\)\" } else { Write-Output \"$n -> NOT FOUND\" } }; Write-Output \"--- cscript ---\"; \\(Get-Command cscript -ErrorAction SilentlyContinue\\).Source)",
+      "Bash(node -e ' *)",
+      "PowerShell($c = Get-Command node,nodejs,npm -ErrorAction SilentlyContinue; if\\($c\\){$c | Select-Object Name,Source | Format-Table -AutoSize | Out-String} else {Write-Output \"no node in PATH\"}; Get-ChildItem -Path \"C:\\\\\",\"C:\\\\Program Files\",\"C:\\\\Program Files \\(x86\\)\",\"$env:LOCALAPPDATA\\\\Programs\",\"$env:LOCALAPPDATA\" -Filter \"node.exe\" -Recurse -Depth 3 -ErrorAction SilentlyContinue | Select-Object -First 5 -ExpandProperty FullName)",
+      "PowerShell(& \"C:\\\\Users\\\\sakdi\\\\AppData\\\\Local\\\\ms-playwright-go\\\\1.50.1\\\\node.exe\" --version)",
+      "PowerShell(git -C \"C:\\\\Users\\\\sakdi\\\\OneDrive\\\\Desktop\\\\Three_Kingdoms_Project\" status --short)",
+      "PowerShell(& \"$env:LOCALAPPDATA\\\\ms-playwright-go\\\\1.50.1\\\\node.exe\" tools\\\\check_battle.js chencang229)",
+      "PowerShell(& \"$env:LOCALAPPDATA\\\\ms-playwright-go\\\\1.50.1\\\\node.exe\" tools\\\\check_battle.js xiling272)",
+      "PowerShell(& \"$env:LOCALAPPDATA\\\\ms-playwright-go\\\\1.50.1\\\\node.exe\" tools\\\\check_battle.js mei229)",
+      "PowerShell(& \"$env:LOCALAPPDATA\\\\ms-playwright-go\\\\1.50.1\\\\node.exe\" tools\\\\check_battle.js; git -C \"C:\\\\Users\\\\sakdi\\\\OneDrive\\\\Desktop\\\\Three_Kingdoms_Project\" status --short)",
+      "PowerShell(& \"$env:LOCALAPPDATA\\\\ms-playwright-go\\\\1.50.1\\\\node.exe\" \"C:\\\\Users\\\\sakdi\\\\OneDrive\\\\Desktop\\\\Three_Kingdoms_Project\\\\tools\\\\check_battle.js\" twogates230)",
+      "PowerShell(& \"$env:LOCALAPPDATA\\\\ms-playwright-go\\\\1.50.1\\\\node.exe\" tools\\\\check_battle.js conquestwu276)",
+      "PowerShell(& \"$env:LOCALAPPDATA\\\\ms-playwright-go\\\\1.50.1\\\\node.exe\" tools\\\\check_battle.js; & \"$env:LOCALAPPDATA\\\\ms-playwright-go\\\\1.50.1\\\\node.exe\" tools\\\\selfcheck.js)",
+      "PowerShell(& \"$env:LOCALAPPDATA\\\\ms-playwright-go\\\\1.50.1\\\\node.exe\" \"C:\\\\Users\\\\sakdi\\\\OneDrive\\\\Desktop\\\\Three_Kingdoms_Project\\\\tools\\\\check_battle.js\" wuguan244)",
+      "PowerShell(& \"$env:LOCALAPPDATA\\\\ms-playwright-go\\\\1.50.1\\\\node.exe\" \"C:\\\\Users\\\\sakdi\\\\OneDrive\\\\Desktop\\\\Three_Kingdoms_Project\\\\tools\\\\check_battle.js\" eastern255)",
+      "PowerShell(& \"$env:LOCALAPPDATA\\\\ms-playwright-go\\\\1.50.1\\\\node.exe\" \"C:\\\\Users\\\\sakdi\\\\OneDrive\\\\Desktop\\\\Three_Kingdoms_Project\\\\tools\\\\check_battle.js\"; Write-Output \"---- exit: $LASTEXITCODE ----\"; git -C \"C:\\\\Users\\\\sakdi\\\\OneDrive\\\\Desktop\\\\Three_Kingdoms_Project\" status --short)",
+      "Bash(awk '{print NR\": \"length\\($0\\)}' What_If_First_Northern_Expedition.md)",
+      "Bash(sed -n '/^body{/,/^}/p' css/style.css)",
+      "Bash(sed -n '/#time{/,/^}/p;/#tstack{/,/^}/p;/#track{/,/^}/p;/#chapstrip{/,/^}/p' css/style.css)"
     ]
   }
 }
