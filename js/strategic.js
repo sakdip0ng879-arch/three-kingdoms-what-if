@@ -35,6 +35,13 @@ TK.map = (function(){
           const r=a*Math.PI/180; return `${(s*Math.cos(r)).toFixed(1)},${(s*Math.sin(r)).toFixed(1)}`;
         }).join(' ')});
       case 'circle':   return mk('circle',{r:s});
+      /* ประทุนเกวียน — ขบวนลำเลียงเสบียง · รูปเดียวกับใน battle.js shapeOf()
+         ต้องมีทั้งสองที่ ไม่งั้นขบวนเสบียงบนแผนที่ใหญ่จะตกไปเป็นสี่เหลี่ยม
+         ซึ่งตารางสัญลักษณ์ล็อกไว้แล้วว่าแปลว่าทหารราบ */
+      case 'wagon':    return mk('polygon',{points:
+        [[-1.30,.62],[-1.30,-.10],[-1.02,-.62],[-.56,-.90],[0,-.98],
+         [.56,-.90],[1.02,-.62],[1.30,-.10],[1.30,.62]]
+        .map(([x,y]) => `${(x*s).toFixed(1)},${(y*s).toFixed(1)}`).join(' ')});
       default:         return mk('rect',{x:-s, y:-s, width:s*2, height:s*2});
     }
   }
