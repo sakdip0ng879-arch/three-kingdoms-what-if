@@ -26,7 +26,9 @@ if (missing.length){
 NEED.forEach(load);
 const TK = global.window.TK;
 
-const BATTLES = ['jieting228','chencang229','mei229','twogates230',
+/* เพิ่มศึกใหม่ต้องมาเติมที่นี่ด้วย ไม่งั้น build จะปฏิเสธฉากที่ผูกศึกนั้นไว้
+   (ตั้งใจให้เข้มงวด — ฉากที่ชี้ไปยังศึกที่ไม่มีจริง จะได้ปุ่มที่กดแล้วไม่มีอะไรเกิดขึ้น) */
+const BATTLES = ['jieting228','chencang229','mei229','twogates230','yongan241',
                  'wuguan244','eastern255','xiling272','conquestwu276'];
 
 /* ── กำลังพลที่เสียในโหมดสมรภูมิ — คิดจากไฟล์ศึกโดยตรง ──

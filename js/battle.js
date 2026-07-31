@@ -367,6 +367,10 @@ TK.battle = (function(){
     if (n < phase || n > phase + 1){
       build();
       for (let k=0; k<n; k++) applyPhase(k, true);
+      /* ป้ายของทุกระยะที่เพิ่งเล่นย้อนมาต้องถูกล้าง ไม่งั้นคนที่กดข้ามไประยะที่ 5
+         จะเห็นป้ายของระยะ 1–4 กองรวมกันอยู่บนจอพร้อมกันหมด
+         (เล่นเรียงตามลำดับไม่เจอ เพราะ clearAnim ทำงานทุกครั้งที่ขึ้นระยะใหม่) */
+      if (gLabels) gLabels.replaceChildren();
       phase = n - 1;
     }
     phase = n;

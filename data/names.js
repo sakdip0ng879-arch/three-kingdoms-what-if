@@ -80,6 +80,9 @@ window.TK.people = {
   lukang:    { th: "ลกข้อง",      py: "Lu Kang",   side: "wu" },
   zhoufang:  { th: "โจวฝาง",      py: "Zhou Fang", side: "wu" },
   zhangti:   { th: "จางที",       py: "Zhang Ti",  side: "wu" },
+  /* พ่อลูกคู่นี้ยืนอยู่ปากช่องเขาสามหุบเหมือนกัน ห่างกันสามสิบเอ็ดปี
+     พ่อยกเรือขึ้นมาตีฮั่นปี 241 · ลูกยกเมืองให้ฮั่นปี 272 */
+  buzhi:     { th: "ปู้จื้อ",     py: "Bu Zhi",    side: "wu" },
   buchan:    { th: "ปู้ฉั่น",     py: "Bu Chan",   side: "wu" },
 
   /* --- นอกสามก๊ก --- */
