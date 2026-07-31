@@ -297,7 +297,12 @@ TK.battle = (function(){
       return;
     }
 
-    done();
+    /* ตกมาถึงตรงนี้แปลว่า act นี้ไม่ใช่ชนิดที่ผูกกับหน่วย — ส่งต่อให้ runFree
+       ไม่งั้น act อย่าง { u:"kongming", siege:"simayi" } จะเงียบหายไปเฉย ๆ
+       เพราะตัวแยกทางที่ applyPhase เลือกเส้นทางจาก "มี a.u ไหม" ไม่ใช่จากชนิดของ act
+       (siege/burn/label/show/hide อยู่ใน runFree ทั้งหมด)
+       บักนี้ทำให้วงล้อมใน chencang229 ไม่เคยขึ้นเลยตั้งแต่วันที่เขียน */
+    return runFree(a, instant, done);
   }
 
   /* วาดรูปทรงใหม่ตามขนาดที่เปลี่ยน */
