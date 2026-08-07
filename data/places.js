@@ -43,7 +43,11 @@ window.TK.places = {
   tongguan:  { th:"ถงกวน",   py:"Tong Pass", map:"Tong Pass", x:733, y:625, type:"pass" },
   wuguan:    { th:"อู่กวน",  py:"Wu Pass",   map:"Wu Pass",   x:743, y:725, type:"pass" },
   puban:     { th:"ท่าข้ามผู่ปั่น", py:"Puban Ford", map:"Pu Ban", x:740, y:559, type:"ford" },
-  xiaoguan:  { th:"เซียวกวน", py:"Xiao Pass", map:null,       x:452, y:520, type:"pass", chk:true },
+  /* ★ ย้ายจาก (452,520) มาที่นี่ — 蕭關 ยุคฮั่น–วุ่ยอยู่ในเมืองอันติ้ง ที่เกาผิง (高平)
+     ซึ่งบนแผนที่พื้นคือแถบ Shi Cheng (413,426) ตะวันตกเฉียงเหนือของ An Ding ไม่ใช่ใต้ลงมา
+     ตำแหน่งเดิมทำให้ประตูอยู่ *ระหว่าง* อันติ้งกับกวนจง ซึ่งขัดกับตัวเนื้อเรื่องเองที่บอกว่า
+     อันติ้งอยู่บนถนนก่อนถึงเซียวกวน และเซียวกวนคือประตูบานนอกสุดที่เปิดออกไปหาเลียงจิ๋ว */
+  xiaoguan:  { th:"เซียวกวน", py:"Xiao Pass", map:null,       x:408, y:432, type:"pass", chk:true },
   hangu:     { th:"ด่านฮันก๋ก", py:"Hangu Pass", map:"Han Gu Pass", x:777, y:633, type:"pass" },
   hulao:     { th:"ฮูโลก",   py:"Hulao Pass", map:"Hu Lao Pass", x:944, y:590, type:"pass" },
 
